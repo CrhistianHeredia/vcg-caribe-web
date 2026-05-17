@@ -62,3 +62,8 @@ temp/
 
 # Local development
 *.local
+
+# Testing artifacts
+responsive-test-results/
+test-*.mjs
+debug-*.mjs
