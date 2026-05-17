@@ -118,6 +118,107 @@ npx wrangler@3 pages deploy dist --project-name=vcg-caribe
 - Wrangler 4+ requiere Node 22+
 - El token de API se lee automáticamente desde `.env`
 
+## Testing Responsivo con Playwright
+
+El proyecto incluye Playwright como dependencia de desarrollo para validar el comportamiento responsivo del sitio.
+
+### Instalación de Browsers
+
+```bash
+# Instalar Chromium para Playwright
+npx playwright install chromium
+```
+
+### Script de Validación Responsiva
+
+Crear `test-responsive.mjs` para validar todas las páginas en múltiples viewports:
+
+```javascript
+import { chromium } from 'playwright';
+
+const VIEWPORTS = [
+  { name: 'mobile-sm', width: 320, height: 568 },  // iPhone SE
+  { name: 'mobile-md', width: 375, height: 667 },  // iPhone 8
+  { name: 'mobile-lg', width: 414, height: 896 },  // iPhone 11 Pro Max
+  { name: 'tablet', width: 768, height: 1024 },    // iPad
+  { name: 'desktop', width: 1280, height: 800 },   // Desktop
+];
+
+const PAGES = ['/', '/servicios', '/portafolio', '/nosotros', '/contacto'];
+
+async function testResponsive() {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+
+  for (const pageUrl of PAGES) {
+    for (const viewport of VIEWPORTS) {
+      await page.setViewportSize(viewport);
+      await page.goto(`http://localhost:4321${pageUrl}`);
+
+      // Detectar scroll horizontal (problema común en móvil)
+      const hasOverflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth > document.documentElement.clientWidth
+      );
+
+      if (hasOverflow) {
+        console.log(`⚠️ Overflow en ${pageUrl} @ ${viewport.name}`);
+      }
+
+      // Capturar screenshot
+      await page.screenshot({
+        path: `screenshots/${pageUrl.slice(1) || 'home'}-${viewport.name}.png`,
+        fullPage: true
+      });
+    }
+  }
+
+  await browser.close();
+}
+
+testResponsive();
+```
+
+### Ejecución
+
+```bash
+# Iniciar servidor de desarrollo
+pnpm dev
+
+# En otra terminal, ejecutar tests
+node test-responsive.mjs
+```
+
+### Debug de Elementos con Overflow
+
+Para identificar qué elemento causa scroll horizontal:
+
+```javascript
+const overflowingElements = await page.evaluate(() => {
+  const docWidth = document.documentElement.clientWidth;
+  const results = [];
+
+  document.querySelectorAll('*').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.right > docWidth) {
+      results.push({
+        element: el.tagName + (el.id ? `#${el.id}` : ''),
+        overflow: Math.round(rect.right - docWidth) + 'px'
+      });
+    }
+  });
+
+  return results;
+});
+```
+
+### Problemas Comunes y Soluciones
+
+| Problema | Causa | Solución |
+|----------|-------|----------|
+| Scroll horizontal | Elementos con `translate-x-full` o posición absoluta fuera del viewport | Agregar `overflow-x-hidden` a `<html>` y `<body>` |
+| Menú móvil transparente | `height: 0` por uso incorrecto de `inset-0` + `top-N` | Usar altura explícita: `h-[calc(100vh-5rem)]` |
+| Menú sin fondo sólido | `backdrop-blur` sin background opaco | Usar `bg-[#color]` en lugar de `bg-color/opacity` |
+
 ## SEO
 
 La configuración de SEO está centralizada en `src/config/seo.ts`:
