@@ -1,0 +1,61 @@
+---
+import { siteConfig, openGraph, pageMeta, getPageMeta, getCanonicalUrl, getAllKeywords, schemaOrg } from '../config/seo';
+
+interface Props {
+  page?: keyof typeof pageMeta;
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const meta = Astro.props.page ? getPageMeta(Astro.props.page) : null;
+const title = Astro.props.title || meta?.title || siteConfig.name;
+const description = Astro.props.description || meta?.description || siteConfig.description;
+const image = Astro.props.image || openGraph.defaultImage;
+const canonical = Astro.props.page ? getCanonicalUrl(Astro.props.page) : siteConfig.url;
+const keywords = meta?.keywords || getAllKeywords();
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteConfig.url}${image}`} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={openGraph.type} />
+    <meta property="og:locale" content={openGraph.locale} />
+    <meta property="og:site_name" content={openGraph.siteName} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteConfig.url}${image}`} />
+
+    <!-- Schema.org -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)}></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen flex flex-col custom-scrollbar">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

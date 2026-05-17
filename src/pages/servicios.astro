@@ -1,0 +1,313 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+
+const services = [
+  {
+    id: 'ventanas',
+    title: 'Ventanas y Puertas',
+    description: 'Sistemas de ventanería en aluminio de alta calidad para todo tipo de proyectos.',
+    features: [
+      'Ventanas corredizas de 2, 3 y 4 hojas',
+      'Ventanas abatibles con apertura interior o exterior',
+      'Ventanas fijas para máxima hermeticidad',
+      'Ventanas proyectables con sistema de cadena o brazo',
+      'Puertas corredizas de cristal templado',
+      'Puertas abatibles con cierre automático',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="21" stroke-width="2"/></svg>`,
+    image: '/images/projects/royal-1.jpg',
+  },
+  {
+    id: 'barandales',
+    title: 'Barandales y Pasamanos',
+    description: 'Sistemas de barandales que combinan seguridad, funcionalidad y estética moderna.',
+    features: [
+      'Barandales de vidrio templado con herrajes de acero inoxidable',
+      'Barandales de aluminio con diseño minimalista',
+      'Pasamanos de acero inoxidable',
+      'Barandales para balcones y terrazas',
+      'Barandales para escaleras interiores y exteriores',
+      'Soluciones a medida para proyectos especiales',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 6v12M20 6v12M4 18h16M8 6v12M12 6v12M16 6v12"/></svg>`,
+    image: '/images/projects/cielo-maya.jpg',
+  },
+  {
+    id: 'muros-cortina',
+    title: 'Muros Cortina y Fachadas',
+    description: 'Sistemas de fachadas de vidrio estructural para edificios modernos.',
+    features: [
+      'Muros cortina con sistema stick',
+      'Muros cortina con sistema unitizado',
+      'Fachadas ventiladas de aluminio',
+      'Sistemas spider con vidrio templado',
+      'Fachadas con control solar integrado',
+      'Soluciones de alta eficiencia energética',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`,
+    image: '/images/projects/burger-king.jpg',
+  },
+  {
+    id: 'hotelera',
+    title: 'Cancelería Hotelera',
+    description: 'Soluciones especializadas para hoteles y resorts de la Riviera Maya.',
+    features: [
+      'Ventanas con aislamiento acústico superior',
+      'Puertas de acceso con control de seguridad',
+      'Mamparas de baño en vidrio templado',
+      'Divisiones para áreas comunes',
+      'Sistemas resistentes al ambiente salino',
+      'Cumplimiento de normas de huracanes',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>`,
+    image: '/images/projects/las-olas-71.jpg',
+  },
+  {
+    id: 'residencial',
+    title: 'Proyectos Residenciales',
+    description: 'Cancelería personalizada para casas y departamentos de lujo.',
+    features: [
+      'Diseño personalizado según necesidades',
+      'Ventanas de piso a techo',
+      'Puertas de terraza de gran formato',
+      'Tragaluces y domos',
+      'Cerramientos de terrazas',
+      'Acabados premium y colores personalizados',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>`,
+    image: '/images/projects/lote-165.jpg',
+  },
+  {
+    id: 'mantenimiento',
+    title: 'Mantenimiento y Reparación',
+    description: 'Servicio integral de mantenimiento preventivo y correctivo.',
+    features: [
+      'Mantenimiento preventivo programado',
+      'Reparación de herrajes y mecanismos',
+      'Sustitución de vidrios dañados',
+      'Ajuste y calibración de ventanas',
+      'Reemplazo de empaques y sellos',
+      'Servicio de emergencia 24/7',
+    ],
+    icon: `<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
+    image: '/images/projects/villa-magna-bano.jpg',
+  },
+];
+
+const process = [
+  {
+    step: '01',
+    title: 'Consulta Inicial',
+    description: 'Evaluamos tus necesidades y objetivos del proyecto.',
+  },
+  {
+    step: '02',
+    title: 'Diseño y Cotización',
+    description: 'Desarrollamos propuestas técnicas y presupuesto detallado.',
+  },
+  {
+    step: '03',
+    title: 'Fabricación',
+    description: 'Producción con materiales de primera calidad.',
+  },
+  {
+    step: '04',
+    title: 'Instalación',
+    description: 'Montaje profesional con acabados impecables.',
+  },
+];
+---
+
+<PageLayout page="servicios">
+  <!-- Hero with Background Image -->
+  <section class="relative min-h-[70vh] flex items-center overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+      <img
+        src="/images/projects/paravian-fachada.jpg"
+        alt="VCG Caribe - Servicios de Cancelería"
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-deep/95 via-deep/80 to-deep/60"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-deep via-transparent to-transparent"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10 py-20">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent font-semibold text-sm uppercase tracking-wider rounded-full mb-6 backdrop-blur-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+          Nuestros Servicios
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          Soluciones <span class="gradient-text">Integrales</span><br/>
+          en Cancelería
+        </h1>
+        <p class="text-white/80 text-lg md:text-xl max-w-2xl mb-8">
+          Ofrecemos una amplia gama de productos y servicios para satisfacer
+          las necesidades de cada proyecto, desde residencias hasta grandes desarrollos.
+        </p>
+
+        <!-- Service Quick Links -->
+        <div class="flex flex-wrap gap-3">
+          <a href="#ventanas" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/10 text-white/90 text-sm hover:bg-white/20 transition-all">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+              <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
+              <line x1="12" y1="3" x2="12" y2="21" stroke-width="2"/>
+            </svg>
+            Ventanas
+          </a>
+          <a href="#barandales" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/10 text-white/90 text-sm hover:bg-white/20 transition-all">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 6v12M20 6v12M4 18h16M8 6v12M12 6v12M16 6v12"/>
+            </svg>
+            Barandales
+          </a>
+          <a href="#muros-cortina" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/10 text-white/90 text-sm hover:bg-white/20 transition-all">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Muros Cortina
+          </a>
+          <a href="#hotelera" class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/10 text-white/90 text-sm hover:bg-white/20 transition-all">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+            </svg>
+            Hotelera
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative Element -->
+    <div class="absolute right-0 bottom-0 w-1/3 h-full hidden lg:block">
+      <div class="absolute bottom-20 right-20 w-64 h-64 border-2 border-accent/20 rounded-3xl transform rotate-12"></div>
+      <div class="absolute bottom-32 right-32 w-48 h-48 border-2 border-white/5 rounded-2xl transform -rotate-6"></div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="py-20 lg:py-32 bg-light">
+    <div class="container mx-auto px-4">
+      {services.map((service, index) => (
+        <div id={service.id} class={`grid lg:grid-cols-2 gap-12 items-center mb-24 last:mb-0 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+          <div class={index % 2 === 1 ? 'lg:order-2' : ''}>
+            <div class="mb-6 text-accent" set:html={service.icon} />
+            <h2 class="text-3xl md:text-4xl font-bold text-deep mb-4">{service.title}</h2>
+            <p class="text-muted text-lg mb-6">{service.description}</p>
+            <ul class="space-y-3 mb-8">
+              {service.features.map((feature) => (
+                <li class="flex items-start gap-3">
+                  <svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span class="text-muted">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <Button href="/contacto" variant="primary">
+              Solicitar Cotización
+            </Button>
+          </div>
+          <div class={`relative group ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+            <div class={`p-[3px] shadow-xl group-hover:shadow-2xl group-hover:shadow-accent/20 transition-all duration-500 bg-gradient-to-br from-accent via-navy to-accent ${index % 2 === 0 ? 'rounded-[2rem_0.5rem_2rem_0.5rem]' : 'rounded-[0.5rem_2rem_0.5rem_2rem]'}`}>
+              <div class={`relative overflow-hidden ${index % 2 === 0 ? 'rounded-[calc(2rem-3px)_calc(0.5rem-3px)_calc(2rem-3px)_calc(0.5rem-3px)]' : 'rounded-[calc(0.5rem-3px)_calc(2rem-3px)_calc(0.5rem-3px)_calc(2rem-3px)]'}`}>
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                />
+                <!-- Shine effect -->
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none"></div>
+              </div>
+            </div>
+            <!-- Decorative elements -->
+            <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-accent/10 rounded-2xl -z-10 transition-all duration-500 group-hover:-bottom-6 group-hover:-right-6 group-hover:bg-accent/20"></div>
+            <div class="absolute -top-4 -left-4 w-20 h-20 border-2 border-accent/30 rounded-xl -z-10 transition-all duration-500 group-hover:-top-6 group-hover:-left-6"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="py-20 lg:py-32 bg-deep-gradient-radial">
+    <div class="container mx-auto px-4">
+      <SectionHeader
+        kicker="Nuestro Proceso"
+        title="Cómo trabajamos"
+        subtitle="Un proceso estructurado que garantiza resultados excepcionales en cada proyecto."
+        dark={true}
+      />
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {process.map((step, index) => (
+          <div class="relative reveal" style={`animation-delay: ${index * 100}ms`}>
+            <div class="glass-card-dark p-8 rounded-2xl text-center h-full">
+              <span class="text-6xl font-bold text-accent/30 block mb-4">{step.step}</span>
+              <h3 class="text-xl font-bold text-white mb-3">{step.title}</h3>
+              <p class="text-white/70">{step.description}</p>
+            </div>
+            {index < process.length - 1 && (
+              <div class="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-accent/30"></div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 lg:py-32 bg-light">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-deep mb-6">
+        ¿Listo para comenzar tu proyecto?
+      </h2>
+      <p class="text-muted text-lg max-w-2xl mx-auto mb-8">
+        Contáctanos hoy para una cotización personalizada.
+        Nuestro equipo está listo para ayudarte.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <Button href="/contacto" variant="primary" size="lg">
+          Contactar Ahora
+        </Button>
+        <Button href="/portafolio" variant="outline" size="lg">
+          Ver Proyectos
+        </Button>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const revealElements = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    revealElements.forEach(el => observer.observe(el));
+  });
+</script>

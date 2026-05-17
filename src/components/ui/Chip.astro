@@ -1,0 +1,28 @@
+---
+interface Props {
+  variant?: 'accent' | 'dark' | 'light';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const {
+  variant = 'accent',
+  size = 'md',
+  class: className = '',
+} = Astro.props;
+
+const variantClasses = {
+  accent: 'bg-accent/10 text-accent border-accent/20',
+  dark: 'bg-deep/10 text-deep border-deep/20',
+  light: 'bg-white/10 text-white border-white/20',
+};
+
+const sizeClasses = {
+  sm: 'px-2 py-1 text-xs',
+  md: 'px-3 py-1.5 text-sm',
+};
+---
+
+<span class={`inline-flex items-center rounded-full border font-medium ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}>
+  <slot />
+</span>

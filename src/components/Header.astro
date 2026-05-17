@@ -1,0 +1,149 @@
+---
+const navItems = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Nosotros', href: '/nosotros' },
+  { label: 'Servicios', href: '/servicios' },
+  { label: 'Portafolio', href: '/portafolio' },
+  { label: 'Contacto', href: '/contacto' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="container mx-auto px-4">
+    <nav class="flex items-center justify-between h-20">
+      <!-- Logo -->
+      <a href="/" class="flex items-center group">
+        <div class="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 transition-all duration-300 group-hover:bg-white group-hover:shadow-lg">
+          <img
+            src="/images/logo-vcg.png"
+            alt="VCG Caribe"
+            class="h-10 sm:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <ul class="hidden lg:flex items-center gap-8">
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                'relative py-2 text-sm font-medium transition-colors duration-300',
+                'after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-full',
+                currentPath === item.href ? 'text-accent after:w-full' : 'text-white/80 hover:text-white'
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- CTA Button -->
+      <a href="/contacto" class="hidden lg:flex btn-primary">
+        Cotizar Proyecto
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-btn"
+        class="lg:hidden flex flex-col gap-1.5 p-2"
+        aria-label="Abrir menú"
+      >
+        <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar1"></span>
+        <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar2"></span>
+        <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar3"></span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="lg:hidden fixed inset-0 top-20 bg-deep/95 backdrop-blur-lg transform translate-x-full transition-transform duration-300"
+  >
+    <nav class="container mx-auto px-4 py-8">
+      <ul class="flex flex-col gap-4">
+        {navItems.map((item, index) => (
+          <li style={`animation-delay: ${index * 50}ms`}>
+            <a
+              href={item.href}
+              class:list={[
+                'block py-3 text-2xl font-medium transition-colors duration-300',
+                currentPath === item.href ? 'text-accent' : 'text-white/80 hover:text-accent'
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-8 pt-8 border-t border-white/10">
+        <a href="/contacto" class="btn-primary w-full text-center">
+          Cotizar Proyecto
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('header');
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+
+  let isMenuOpen = false;
+
+  // Scroll effect
+  const handleScroll = () => {
+    if (window.scrollY > 50) {
+      header?.classList.add('header-scrolled', 'backdrop-blur-lg', 'shadow-lg');
+    } else {
+      header?.classList.remove('header-scrolled', 'backdrop-blur-lg', 'shadow-lg');
+    }
+  };
+
+  // Mobile menu toggle
+  const toggleMenu = () => {
+    isMenuOpen = !isMenuOpen;
+
+    if (isMenuOpen) {
+      mobileMenu?.classList.remove('translate-x-full');
+      bar1?.classList.add('rotate-45', 'translate-y-2');
+      bar2?.classList.add('opacity-0');
+      bar3?.classList.add('-rotate-45', '-translate-y-2');
+      document.body.style.overflow = 'hidden';
+    } else {
+      mobileMenu?.classList.add('translate-x-full');
+      bar1?.classList.remove('rotate-45', 'translate-y-2');
+      bar2?.classList.remove('opacity-0');
+      bar3?.classList.remove('-rotate-45', '-translate-y-2');
+      document.body.style.overflow = '';
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  mobileMenuBtn?.addEventListener('click', toggleMenu);
+
+  // Close menu on link click
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (isMenuOpen) toggleMenu();
+    });
+  });
+
+  // Initial check
+  handleScroll();
+</script>
+
+<style>
+  .header-scrolled {
+    background: linear-gradient(135deg, rgba(11, 31, 58, 0.97) 0%, rgba(30, 58, 95, 0.97) 50%, rgba(11, 31, 58, 0.97) 100%);
+  }
+</style>

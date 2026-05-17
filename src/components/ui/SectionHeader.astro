@@ -1,0 +1,39 @@
+---
+interface Props {
+  kicker?: string;
+  title: string;
+  subtitle?: string;
+  align?: 'left' | 'center';
+  dark?: boolean;
+  class?: string;
+}
+
+const {
+  kicker,
+  title,
+  subtitle,
+  align = 'center',
+  dark = false,
+  class: className = '',
+} = Astro.props;
+
+const alignClasses = align === 'center' ? 'text-center' : 'text-left';
+const dividerAlign = align === 'center' ? 'mx-auto' : '';
+---
+
+<div class={`mb-12 ${alignClasses} ${className}`}>
+  {kicker && (
+    <span class="inline-block text-accent font-semibold text-sm uppercase tracking-wider mb-2">
+      {kicker}
+    </span>
+  )}
+  <h2 class={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${dark ? 'text-white' : 'text-deep'}`}>
+    {title}
+  </h2>
+  <div class={`w-20 h-1 bg-accent rounded-full ${dividerAlign}`}></div>
+  {subtitle && (
+    <p class={`mt-4 text-lg max-w-2xl ${align === 'center' ? 'mx-auto' : ''} ${dark ? 'text-white/70' : 'text-muted'}`}>
+      {subtitle}
+    </p>
+  )}
+</div>

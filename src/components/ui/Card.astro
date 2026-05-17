@@ -1,0 +1,28 @@
+---
+interface Props {
+  variant?: 'light' | 'dark';
+  class?: string;
+  hover?: boolean;
+}
+
+const {
+  variant = 'light',
+  class: className = '',
+  hover = true,
+} = Astro.props;
+
+const baseClasses = 'rounded-2xl transition-all duration-300';
+
+const variantClasses = {
+  light: 'bg-white/80 backdrop-blur-md border border-white/20 shadow-xl',
+  dark: 'bg-deep/80 backdrop-blur-md border border-white/10 shadow-xl',
+};
+
+const hoverClasses = hover ? 'hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10' : '';
+
+const classes = `${baseClasses} ${variantClasses[variant]} ${hoverClasses} ${className}`;
+---
+
+<div class={classes}>
+  <slot />
+</div>

@@ -1,0 +1,64 @@
+# Build output
+dist/
+.output/
+
+# Astro generated
+.astro/
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Editor directories
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Cache
+.cache/
+.eslintcache
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Deploy platforms
+.vercel/
+.netlify/
+
+# Local development
+*.local
