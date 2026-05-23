@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -13,14 +13,13 @@
     "deploy": "pnpm build && wrangler pages deploy dist --project-name=vcg-caribe"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.5.1",
-    "@astrojs/tailwind": "5.1.0",
+    "@astrojs/tailwind": "^6.0.2",
     "animejs": "^4.4.1",
-    "astro": "4.15.0",
-    "tailwindcss": "3.4.0"
+    "astro": "^5.18.1",
+    "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
     "playwright": "^1.60.0",
-    "wrangler": "3"
+    "wrangler": "^4.94.0"
   }
 }
