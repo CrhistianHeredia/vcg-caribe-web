@@ -14,17 +14,17 @@ export const siteConfig = {
 
   // Información de contacto
   contact: {
-    phones: ['998 234 4274', '998 204 2369'],
-    emails: ['servicioalcliente.vcg@gmail.com', 'acua.vcg@gmail.com'],
-    whatsapp: '529982344274',
+    phones: ['998 204 2369'],
+    emails: ['acua.vcg@gmail.com'],
+    whatsapp: '529982042369',
   },
 
   // Ubicaciones
   locations: {
     cancun: {
       name: 'Matriz Cancún',
-      address: 'Av. Talleres, Región 92, Cancún, Q. Roo',
-      mapUrl: 'https://maps.google.com/?q=Av+Talleres+Region+92+Cancun',
+      address: 'Av. Puerto Juárez 714-17, Región 92, Cancún, Q. Roo',
+      mapUrl: 'https://maps.google.com/?q=Av+Puerto+Juarez+714+Region+92+77516+Cancun',
     },
     merida: {
       name: 'Sucursal Mérida',
@@ -139,7 +139,7 @@ export const pageMeta = {
 
   contacto: {
     title: 'Contacto | Cotiza tu Proyecto de Cancelería - VCG Caribe',
-    description: 'Contáctanos para cotizar tu proyecto de cancelería. Atendemos en Cancún, Riviera Maya y Mérida. Llámanos: 998 234 4274 o envía WhatsApp.',
+    description: 'Contáctanos para cotizar tu proyecto de cancelería. Atendemos en Cancún, Riviera Maya y Mérida. Llámanos: 998 204 2369 o envía WhatsApp.',
     keywords: ['cotización cancelería', 'contacto VCG Caribe', ...keywords.geographic.slice(0, 2)].join(', '),
   },
 };
@@ -155,7 +155,7 @@ export const schemaOrg = {
   email: siteConfig.contact.emails[0],
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Av. Talleres, Región 92',
+    streetAddress: 'Av. Puerto Juárez 714-17, Región 92',
     addressLocality: 'Cancún',
     addressRegion: 'Quintana Roo',
     postalCode: '77516',
