@@ -298,7 +298,7 @@ const stats = [
               <!-- Content Overlay -->
               <div class={`absolute inset-x-0 bottom-0 p-4 md:p-6 transform transition-transform duration-500 ${project.size === 'featured' || project.size === 'tall' ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0'}`}>
                 <!-- Location -->
-                <div class={`flex items-center gap-2 text-accent text-sm mb-2 transition-opacity duration-500 ${project.size === 'featured' || project.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-100'}`}>
+                <div class={`flex items-center gap-2 text-accent-light text-sm font-medium mb-2 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-opacity duration-500 ${project.size === 'featured' || project.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-100'}`}>
                   <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -315,7 +315,7 @@ const stats = [
                 {project.specs && (
                   <div class={`flex flex-wrap gap-1.5 mb-3 transition-opacity duration-500 ${project.size === 'featured' || project.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-100'}`}>
                     {project.specs.map((spec: string) => (
-                      <span class="px-2 py-0.5 bg-accent/20 text-accent text-xs font-medium rounded-md border border-accent/30">
+                      <span class="px-2 py-0.5 bg-deep/70 text-accent-light text-xs font-semibold rounded-md border border-accent/40 backdrop-blur-sm shadow-md">
                         {spec}
                       </span>
                     ))}
