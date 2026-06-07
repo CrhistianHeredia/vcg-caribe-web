@@ -190,7 +190,7 @@ export const openGraph = {
   type: 'website',
   locale: 'es_MX',
   siteName: siteConfig.name,
-  defaultImage: '/images/projects/cielo-maya-arquitectura.jpg',
+  defaultImage: '/images/og-vcg.jpg',
 };
 
 // Helper para canonical URL
