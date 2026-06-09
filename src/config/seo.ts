@@ -14,9 +14,21 @@ export const siteConfig = {
 
   // Información de contacto
   contact: {
-    phones: ['998 204 2369'],
-    emails: ['acua.vcg@gmail.com'],
-    whatsapp: '529982042369',
+    // Contacto principal (Matriz Cancún) — usado por botones genéricos
+    phones: ['998 117 8422'],
+    emails: ['ventasqroo@gmail.com'],
+    whatsapp: '529981178422',
+    // Contacto por sucursal
+    cancun: {
+      phone: '998 117 8422',
+      whatsapp: '529981178422',
+      email: 'ventasqroo@gmail.com',
+    },
+    merida: {
+      phone: '999 245 6823',
+      whatsapp: '529992456823',
+      email: 'ventasyuc.vcg@gmail.com',
+    },
   },
 
   // Ubicaciones
@@ -42,7 +54,7 @@ export const siteConfig = {
 
   // Redes sociales
   social: {
-    facebook: 'https://facebook.com/vcgcaribe',
+    facebook: 'https://www.facebook.com/share/1E9RTkagjh/',
     instagram: 'https://instagram.com/vcgcaribe',
     // linkedin: '',
   },
@@ -139,7 +151,7 @@ export const pageMeta = {
 
   contacto: {
     title: 'Contacto | Cotiza tu Proyecto de Cancelería - VCG Caribe',
-    description: 'Contáctanos para cotizar tu proyecto de cancelería. Atendemos en Cancún, Riviera Maya y Mérida. Llámanos: 998 204 2369 o envía WhatsApp.',
+    description: 'Contáctanos para cotizar tu proyecto de cancelería. Atendemos en Cancún, Riviera Maya y Mérida. Llámanos: 998 117 8422 o envía WhatsApp.',
     keywords: ['cotización cancelería', 'contacto VCG Caribe', ...keywords.geographic.slice(0, 2)].join(', '),
   },
 };
