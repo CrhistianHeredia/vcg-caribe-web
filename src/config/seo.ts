@@ -17,13 +17,13 @@ export const siteConfig = {
     // Contacto principal (Sucursal Cancún) — usado por botones genéricos
     // TODO: confirmar con el cliente si los botones genéricos deben apuntar a la Matriz Mérida
     phones: ['998 117 8422'],
-    emails: ['ventasqroo@gmail.com'],
+    emails: ['ventasqroo.vcg@gmail.com'],
     whatsapp: '529981178422',
     // Contacto por sucursal
     cancun: {
       phone: '998 117 8422',
       whatsapp: '529981178422',
-      email: 'ventasqroo@gmail.com',
+      email: 'ventasqroo.vcg@gmail.com',
     },
     merida: {
       phone: '999 245 6823',
