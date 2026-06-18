@@ -14,7 +14,8 @@ export const siteConfig = {
 
   // Información de contacto
   contact: {
-    // Contacto principal (Matriz Cancún) — usado por botones genéricos
+    // Contacto principal (Sucursal Cancún) — usado por botones genéricos
+    // TODO: confirmar con el cliente si los botones genéricos deben apuntar a la Matriz Mérida
     phones: ['998 117 8422'],
     emails: ['ventasqroo@gmail.com'],
     whatsapp: '529981178422',
@@ -34,12 +35,12 @@ export const siteConfig = {
   // Ubicaciones
   locations: {
     cancun: {
-      name: 'Matriz Cancún',
+      name: 'Sucursal Cancún',
       address: 'Av. Puerto Juárez 714-17, Región 92, Cancún, Q. Roo',
       mapUrl: 'https://maps.google.com/?q=Av+Puerto+Juarez+714+Region+92+77516+Cancun',
     },
     merida: {
-      name: 'Sucursal Mérida',
+      name: 'Matriz Mérida',
       address: 'Calle 92 No. 503 D, Centro, CP. 97000, Mérida, Yucatán',
       mapUrl: 'https://maps.google.com/?q=Calle+92+503+Centro+Merida',
     },
