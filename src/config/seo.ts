@@ -10,7 +10,7 @@ export const siteConfig = {
   description: 'Expertos en cancelería de vidrio y aluminio para proyectos hoteleros, residenciales y comerciales en Cancún, Riviera Maya y la Península de Yucatán.',
 
   // URLs
-  url: 'https://vcgcaribe.com',
+  url: 'https://www.vcgdelcaribe.com',
 
   // Información de contacto
   contact: {

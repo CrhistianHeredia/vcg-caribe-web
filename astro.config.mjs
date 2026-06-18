@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://vcgcaribe.com',
+  site: 'https://www.vcgdelcaribe.com',
   integrations: [tailwind(), sitemap()],
   vite: {
     ssr: {
