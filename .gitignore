@@ -67,3 +67,8 @@ temp/
 responsive-test-results/
 test-*.mjs
 debug-*.mjs
+
+# Tooling local (no forma parte del sitio)
+.claude/
+.daat/
+DAAT.md
