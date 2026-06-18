@@ -91,7 +91,7 @@ const WEB3FORMS_KEYS = {
                   required
                   minlength="3"
                   maxlength="100"
-                  pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$"
+                  pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]+$"
                   autocomplete="name"
                   class="form-input w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
                   placeholder="Tu nombre completo"
@@ -109,7 +109,7 @@ const WEB3FORMS_KEYS = {
                   required
                   minlength="10"
                   maxlength="15"
-                  pattern="^[\d\s\-\+\(\)]+$"
+                  pattern="^[0-9 +()-]+$"
                   autocomplete="tel"
                   class="form-input w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300"
                   placeholder="998 123 4567"
@@ -360,11 +360,15 @@ const WEB3FORMS_KEYS = {
         isValid = false;
       }
 
-      // Check pattern
+      // Check pattern (con try/catch: un patrón inválido no debe romper el formulario)
       if (field.hasAttribute('pattern') && field.value) {
-        const pattern = new RegExp(field.getAttribute('pattern') || '');
-        if (!pattern.test(field.value)) {
-          isValid = false;
+        try {
+          const pattern = new RegExp(field.getAttribute('pattern') || '');
+          if (!pattern.test(field.value)) {
+            isValid = false;
+          }
+        } catch {
+          // Patrón inválido: lo ignoramos; required/minlength/email/tel ya validan.
         }
       }
 
