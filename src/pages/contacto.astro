@@ -3,6 +3,14 @@ import PageLayout from '../layouts/PageLayout.astro';
 import SectionHeader from '../components/ui/SectionHeader.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+
+// Claves públicas de Web3Forms por sucursal (es seguro exponerlas en el cliente).
+// Genera cada una en https://web3forms.com poniendo el correo de la sucursal:
+//   cancun -> ventasqroo@gmail.com   |   merida -> ventasyuc.vcg@gmail.com
+const WEB3FORMS_KEYS = {
+  cancun: 'b5260e2f-7815-4740-8427-505e150b3c30',
+  merida: '1ebaa7c1-ed87-412b-99bf-43e4702833fe',
+};
 ---
 
 <PageLayout page="contacto">
@@ -70,7 +78,7 @@ import Button from '../components/ui/Button.astro';
         <!-- Contact Form -->
         <Card class="p-8">
           <h2 class="text-2xl font-bold text-deep mb-6">Envíanos un mensaje</h2>
-          <form id="contact-form" class="space-y-6" novalidate>
+          <form id="contact-form" class="space-y-6" novalidate data-key-cancun={WEB3FORMS_KEYS.cancun} data-key-merida={WEB3FORMS_KEYS.merida}>
             <div class="grid md:grid-cols-2 gap-6">
               <div>
                 <label for="name" class="block text-sm font-medium text-deep mb-2">
@@ -127,6 +135,22 @@ import Button from '../components/ui/Button.astro';
               <p class="error-message text-red-500 text-xs mt-1 hidden">Por favor ingresa un correo electrónico válido</p>
             </div>
             <div>
+              <label for="sucursal" class="block text-sm font-medium text-deep mb-2">
+                Sucursal de interés *
+              </label>
+              <select
+                id="sucursal"
+                name="sucursal"
+                required
+                class="form-input w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all duration-300 bg-white"
+              >
+                <option value="">Selecciona la sucursal</option>
+                <option value="cancun">Cancún — Quintana Roo</option>
+                <option value="merida">Mérida — Yucatán</option>
+              </select>
+              <p class="error-message text-red-500 text-xs mt-1 hidden">Por favor selecciona una sucursal</p>
+            </div>
+            <div>
               <label for="project-type" class="block text-sm font-medium text-deep mb-2">
                 Tipo de proyecto
               </label>
@@ -160,6 +184,8 @@ import Button from '../components/ui/Button.astro';
               <p class="error-message text-red-500 text-xs mt-1 hidden">Por favor ingresa un mensaje (mínimo 10 caracteres)</p>
               <p class="text-gray-400 text-xs mt-1 text-right"><span id="char-count">0</span>/1000</p>
             </div>
+            <!-- Honeypot anti-spam (oculto a usuarios reales) -->
+            <input type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <Button type="submit" variant="primary" class="w-full">
               Enviar Mensaje
             </Button>
@@ -398,7 +424,7 @@ import Button from '../components/ui/Button.astro';
     });
 
     // Form submit
-    form?.addEventListener('submit', (e) => {
+    form?.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       // Validate all fields
@@ -418,6 +444,10 @@ import Button from '../components/ui/Button.astro';
         return;
       }
 
+      // Honeypot anti-spam: si está marcado, es un bot → no enviamos.
+      const honeypot = form.querySelector('[name="botcheck"]') as HTMLInputElement | null;
+      if (honeypot?.checked) return;
+
       // Get form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
@@ -428,37 +458,74 @@ import Button from '../components/ui/Button.astro';
       const name = sanitize(data.name as string);
       const phone = sanitize(data.phone as string);
       const email = sanitize(data.email as string);
+      const sucursal = sanitize(data.sucursal as string);
       const projectType = sanitize(data['project-type'] as string) || 'No especificado';
       const message = sanitize(data.message as string);
 
-      // Build WhatsApp message
-      const whatsappMessage = `Hola, me gustaría solicitar información:
+      // La sucursal elegida decide la clave (y por tanto el buzón destino).
+      const accessKey = sucursal === 'merida'
+        ? (form.dataset.keyMerida || '')
+        : (form.dataset.keyCancun || '');
+      const sucursalNombre = sucursal === 'merida' ? 'Mérida' : 'Cancún';
 
-*Nombre:* ${name}
-*Teléfono:* ${phone}
-*Email:* ${email}
-*Tipo de proyecto:* ${projectType}
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      const originalBtnText = submitBtn?.textContent || 'Enviar Mensaje';
 
-*Mensaje:*
-${message}`;
-
-      // Show success status
+      // Estado: enviando
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+      }
       if (formStatus) {
-        formStatus.textContent = 'Redirigiendo a WhatsApp...';
-        formStatus.className = 'text-center text-sm text-green-600';
+        formStatus.textContent = 'Enviando tu mensaje...';
+        formStatus.className = 'text-center text-sm text-muted';
         formStatus.classList.remove('hidden');
       }
 
-      // Open WhatsApp
-      const whatsappUrl = `https://wa.me/529981178422?text=${encodeURIComponent(whatsappMessage)}`;
-      window.open(whatsappUrl, '_blank');
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            access_key: accessKey,
+            subject: `Nuevo contacto web — Sucursal ${sucursalNombre}`,
+            from_name: 'Sitio web VCG Caribe',
+            replyto: email,
+            Sucursal: sucursalNombre,
+            Nombre: name,
+            'Teléfono': phone,
+            Email: email,
+            'Tipo de proyecto': projectType,
+            Mensaje: message,
+          }),
+        });
 
-      // Reset form after short delay
-      setTimeout(() => {
-        form.reset();
-        if (charCount) charCount.textContent = '0';
-        if (formStatus) formStatus.classList.add('hidden');
-      }, 2000);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (formStatus) {
+            formStatus.textContent = '¡Gracias! Tu mensaje fue enviado. Te contactaremos muy pronto.';
+            formStatus.className = 'text-center text-sm text-green-600';
+          }
+          form.reset();
+          if (charCount) charCount.textContent = '0';
+        } else {
+          throw new Error(result.message || 'Error al enviar');
+        }
+      } catch (error) {
+        if (formStatus) {
+          formStatus.textContent = 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.';
+          formStatus.className = 'text-center text-sm text-red-500';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
+      }
     });
   });
 </script>
