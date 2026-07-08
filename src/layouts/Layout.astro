@@ -1,5 +1,6 @@
 ---
 import { siteConfig, openGraph, pageMeta, getPageMeta, getCanonicalUrl, getAllKeywords, schemaOrg } from '../config/seo';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 
 interface Props {
   page?: keyof typeof pageMeta;
@@ -53,6 +54,7 @@ const keywords = meta?.keywords || getAllKeywords();
   </head>
   <body class="min-h-screen flex flex-col custom-scrollbar overflow-x-hidden">
     <slot />
+    <WhatsAppFloat />
   </body>
 </html>
 
