@@ -140,13 +140,6 @@ const stats = [
               Ver Proyectos
             </Button>
           </div>
-
-          <!-- Stats -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-12 border-t border-white/10 animate-fade-in-up animation-delay-400">
-            {stats.map((stat) => (
-              <StatBlock number={stat.number} suffix={stat.suffix} label={stat.label} dark={true} />
-            ))}
-          </div>
         </div>
 
         <!-- Animated Window SVG -->
@@ -207,6 +200,13 @@ const stats = [
           <div class="absolute -top-10 -right-10 w-20 h-20 bg-accent/20 rounded-full blur-xl animate-float"></div>
           <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-accent/10 rounded-full blur-2xl animate-float animation-delay-200"></div>
         </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-10 border-t border-white/10 animate-fade-in-up animation-delay-400">
+        {stats.map((stat) => (
+          <StatBlock number={stat.number} suffix={stat.suffix} label={stat.label} dark={true} />
+        ))}
       </div>
     </div>
 
