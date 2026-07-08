@@ -42,21 +42,23 @@ const currentPath = Astro.url.pathname;
         ))}
       </ul>
 
-      <!-- CTA Button -->
-      <a href="/contacto" class="hidden lg:flex btn-primary">
-        Cotizar Proyecto
-      </a>
+      <!-- CTA + Mobile Menu -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="/contacto" class="btn-primary px-4 py-2 text-sm lg:px-6 lg:py-3 lg:text-base">
+          <span class="hidden sm:inline">Cotizar Proyecto</span>
+          <span class="sm:hidden">Cotizar</span>
+        </a>
 
-      <!-- Mobile Menu Button -->
-      <button
-        id="mobile-menu-btn"
-        class="lg:hidden flex flex-col gap-1.5 p-2"
-        aria-label="Abrir menú"
-      >
-        <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar1"></span>
-        <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar2"></span>
-        <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar3"></span>
-      </button>
+        <button
+          id="mobile-menu-btn"
+          class="lg:hidden flex flex-col gap-1.5 p-2"
+          aria-label="Abrir menú"
+        >
+          <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar1"></span>
+          <span class="w-6 h-0.5 bg-white transition-all duration-300" id="bar2"></span>
+          <span class="w-6 h-0.5 bg-white transition-all duration-300 origin-center" id="bar3"></span>
+        </button>
+      </div>
     </nav>
   </div>
 
