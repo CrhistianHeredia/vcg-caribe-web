@@ -56,7 +56,7 @@ export const siteConfig = {
   // Redes sociales
   social: {
     facebook: 'https://www.facebook.com/share/1E9RTkagjh/',
-    instagram: 'https://instagram.com/vcgcaribe',
+    // instagram: '',  // no hay cuenta de Instagram (confirmado julio 2026)
     // linkedin: '',
   },
 };
