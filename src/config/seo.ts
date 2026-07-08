@@ -157,28 +157,12 @@ export const pageMeta = {
   },
 };
 
-// Schema.org para negocio local
-export const schemaOrg = {
+// Schema.org para negocio local (una entrada por ubicación)
+const schemaBase = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  name: siteConfig.name,
   description: siteConfig.description,
   url: siteConfig.url,
-  telephone: siteConfig.contact.phones[0],
-  email: siteConfig.contact.emails[0],
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Av. Puerto Juárez 714-17, Región 92',
-    addressLocality: 'Cancún',
-    addressRegion: 'Quintana Roo',
-    postalCode: '77516',
-    addressCountry: 'MX',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 21.1619,
-    longitude: -86.8515,
-  },
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
@@ -197,6 +181,42 @@ export const schemaOrg = {
   image: `${siteConfig.url}/images/logo-vcg.png`,
   sameAs: Object.values(siteConfig.social).filter(Boolean),
 };
+
+export const schemaOrg = [
+  {
+    ...schemaBase,
+    name: `${siteConfig.name} — ${siteConfig.locations.merida.name}`,
+    telephone: siteConfig.contact.merida.phone,
+    email: siteConfig.contact.merida.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Calle 92 No. 503 D x 63 y 63A, Centro',
+      addressLocality: 'Mérida',
+      addressRegion: 'Yucatán',
+      postalCode: '97000',
+      addressCountry: 'MX',
+    },
+  },
+  {
+    ...schemaBase,
+    name: `${siteConfig.name} — ${siteConfig.locations.cancun.name}`,
+    telephone: siteConfig.contact.cancun.phone,
+    email: siteConfig.contact.cancun.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Av. Puerto Juárez 714-17, Región 92',
+      addressLocality: 'Cancún',
+      addressRegion: 'Quintana Roo',
+      postalCode: '77516',
+      addressCountry: 'MX',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 21.1619,
+      longitude: -86.8515,
+    },
+  },
+];
 
 // Open Graph defaults
 export const openGraph = {
