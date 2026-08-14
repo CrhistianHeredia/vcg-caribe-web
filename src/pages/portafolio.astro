@@ -331,14 +331,25 @@ const stats = [
     overflow: hidden;
   }
 
-  /* Reveal animation */
+  /* Reveal animation — progressive enhancement.
+     Por defecto las tarjetas están visibles (opacity: 1): sin esto, cualquier
+     tarjeta que nunca entrara en el viewport (sin scroll, JS lento/roto, o un
+     filtro que la muestra de golpe) se quedaría en opacity:0 para siempre. El
+     estado oculto solo se activa cuando el propio script confirma que va a
+     animar (clase .js-reveal-ready en <html>), y ese script respeta
+     prefers-reduced-motion. */
   .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: none;
   }
 
-  .reveal.active {
+  .js-reveal-ready .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .js-reveal-ready .reveal.active {
     opacity: 1;
     transform: translateY(0);
   }
@@ -376,6 +387,10 @@ const stats = [
 
           if (category === 'todos' || itemCategory === category) {
             item.classList.remove('filtered-out');
+            // Cualquier tarjeta que el filtro deja visible se activa de una
+            // vez: no puede depender de haber cruzado el viewport antes (el
+            // usuario pudo filtrar sin haber hecho scroll todavía).
+            item.classList.add('active');
             item.style.animationDelay = `${visibleCount * 50}ms`;
             visibleCount++;
           } else {
@@ -394,20 +409,34 @@ const stats = [
       });
     });
 
-    // Scroll reveal with Intersection Observer
+    // Scroll reveal with Intersection Observer.
+    // Progressive enhancement: la clase que activa el estado oculto en CSS
+    // (.js-reveal-ready) solo se agrega si el JS corrió Y el usuario no pidió
+    // animaciones reducidas. Sin JS, o con prefers-reduced-motion, las
+    // tarjetas se quedan en su opacity:1 por defecto — nunca invisibles.
+    // Se agrega a #projects-grid (no a <html>/<body>): los estilos de Astro
+    // son "scoped" y añaden un atributo data-astro-cid-* a cada selector del
+    // componente, incluida .js-reveal-ready — un elemento fuera de este
+    // archivo (como <html>) nunca tendría ese atributo y el selector no
+    // matchearía nunca.
+    const prefiereMenosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const revealElements = document.querySelectorAll('.reveal');
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
+    if (!prefiereMenosMovimiento) {
+      grid?.classList.add('js-reveal-ready');
 
-    revealElements.forEach(el => observer.observe(el));
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      revealElements.forEach(el => observer.observe(el));
+    }
   });
 </script>
