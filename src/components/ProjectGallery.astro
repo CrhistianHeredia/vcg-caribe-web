@@ -134,16 +134,53 @@ const datos = Object.fromEntries(
       pintar();
     };
 
-    // Abrir: botón "Ver Detalles" y click en la tarjeta (el click en el botón
-    // burbujea a la tarjeta, así que un único listener cubre ambos casos).
-    // El foco al cerrar se devuelve siempre al botón "Ver Detalles": es el
-    // único elemento realmente focusable de la tarjeta (el <div> no tiene
-    // tabindex), así que enfocar el <div> sería un no-op.
+    // El botón "Ver Detalles" solo existe visualmente de md (tablet) hacia
+    // arriba (ver portafolio.astro: "hidden md:block"). En móvil está oculto
+    // con display:none — no es focusable y devolverle el foco con .focus()
+    // sería un no-op — así que ahí la tarjeta misma actúa como disparador:
+    // se le da role="button" + tabindex="0" para que sea alcanzable por
+    // teclado y sea un destino válido de foco al cerrar el modal.
+    // mqBoton usa el mismo punto de corte (768px = md de Tailwind) que la
+    // clase "hidden md:block" del botón, así ambos coinciden siempre.
+    const mqBoton = window.matchMedia('(min-width: 768px)');
+
+    const obtenerDisparador = (tarjeta: HTMLElement, boton: HTMLElement | null): HTMLElement =>
+      boton && mqBoton.matches ? boton : tarjeta;
+
+    const actualizarAccesibilidadTarjeta = (tarjeta: HTMLElement) => {
+      if (mqBoton.matches) {
+        // El botón real ya es el control accesible; evita anidar dos
+        // elementos interactivos (tarjeta + botón) en el orden de tabulación.
+        tarjeta.removeAttribute('role');
+        tarjeta.removeAttribute('tabindex');
+      } else {
+        tarjeta.setAttribute('role', 'button');
+        tarjeta.setAttribute('tabindex', '0');
+      }
+    };
+
+    // Abrir: tap/click en la tarjeta (el click en el botón, cuando existe,
+    // burbujea a la tarjeta, así que un único listener cubre ambos casos sin
+    // abrir el modal dos veces) y Enter/Espacio cuando la tarjeta misma es el
+    // control accesible (móvil).
     document.querySelectorAll<HTMLElement>('.project-item[data-slug]').forEach((tarjeta) => {
       const slug = tarjeta.dataset.slug;
       if (!slug) return;
       const boton = tarjeta.querySelector<HTMLElement>('.abrir-galeria');
-      tarjeta.addEventListener('click', () => abrir(slug, boton ?? tarjeta));
+
+      actualizarAccesibilidadTarjeta(tarjeta);
+      mqBoton.addEventListener('change', () => actualizarAccesibilidadTarjeta(tarjeta));
+
+      tarjeta.addEventListener('click', () => abrir(slug, obtenerDisparador(tarjeta, boton)));
+      tarjeta.addEventListener('keydown', (e: KeyboardEvent) => {
+        // Solo cuando la propia tarjeta es el control (role="button"): un
+        // <button> real ya maneja Enter/Espacio de forma nativa.
+        if (e.target !== tarjeta) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          abrir(slug, obtenerDisparador(tarjeta, boton));
+        }
+      });
     });
 
     btnCerrar.addEventListener('click', cerrar);

@@ -135,13 +135,19 @@ const stats = [
 
               <!-- Content Overlay.
                    flex-col + justify-end mantiene el contenido pegado abajo, como antes.
-                   La diferencia es que ahora hay dos bloques: uno "expandible" (specs +
-                   descripción + botón, min-h-0 + overflow-hidden) que puede comprimirse y
-                   recortar SU PROPIO contenido cuando no cabe, y uno "protegido"
-                   (ubicación + título, flex-shrink-0) que nunca cede espacio. Así, aunque
-                   el bloque expandible mida más que el alto disponible de la tarjeta, el
-                   título nunca queda empujado fuera del área visible. -->
-              <div class={`absolute inset-0 z-10 flex flex-col justify-end p-4 md:p-6 transform transition-transform duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0'}`}>
+                   Hay dos bloques: uno "expandible" (specs + descripción + botón, min-h-0
+                   + overflow-hidden) que se comprime y recorta SU PROPIO contenido cuando
+                   no cabe, y uno "protegido" (ubicación + título, flex-shrink-0) que nunca
+                   cede espacio. Así, aunque el bloque expandible mida más que el alto
+                   disponible de la tarjeta, el título nunca queda empujado fuera del área
+                   visible.
+                   `top-20` (en vez de `inset-0`) reserva 80px arriba para los chips de
+                   año/categoría/estado (miden hasta 62px con el chip de estado envuelto a
+                   dos líneas — medido en marina-yucalpeten) y `overflow-hidden` es el
+                   respaldo duro: ni el bloque expandible al revelarse (hover o foco) ni
+                   nada dentro de este contenedor puede pintarse por encima de los chips,
+                   sin importar viewport o cuántos specs/qué tan largo sea el título. -->
+              <div class={`absolute inset-x-0 bottom-0 top-20 z-10 overflow-hidden flex flex-col justify-end p-4 md:p-6 transform transition-transform duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0'}`}>
                 <!-- Bloque expandible: specs, descripción y botón -->
                 <div class="min-h-0 overflow-hidden flex flex-col">
                   <!-- Specs Badges (máx. 3: en tarjetas de una fila no cabían las 4) -->
@@ -160,10 +166,18 @@ const stats = [
                     {proyecto.description}
                   </p>
 
-                  <!-- View Button. group-focus-within revela este bloque cuando el botón
-                       recibe foco por teclado: antes quedaba invisible pero focusable
-                       (12 paradas de tabulación "fantasma" en las tarjetas normal/wide). -->
-                  <div class={`mt-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-200'}`}>
+                  <!-- View Button. Oculto en móvil (hidden md:block): en pantallas
+                       táctiles no hay hover que lo revele "de forma natural", compite por
+                       el poco alto de una tarjeta de 250px, y el tap sobre la tarjeta ya
+                       abre la galería (ver ProjectGallery.astro), así que ahí es
+                       redundante. De md (tablet) hacia arriba se mantiene el
+                       comportamiento anterior. group-focus-within revela este bloque
+                       cuando el botón recibe foco por teclado: antes quedaba invisible
+                       pero focusable (12 paradas de tabulación "fantasma" en las tarjetas
+                       normal/wide). En móvil, donde el botón no existe visualmente, la
+                       propia tarjeta toma su lugar como disparador focusable — ver el
+                       script de ProjectGallery.astro. -->
+                  <div class={`hidden md:block mt-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-200'}`}>
                     <button
                       type="button"
                       class="abrir-galeria inline-flex items-center gap-2 px-4 py-2 bg-accent text-deep font-semibold text-sm rounded-lg group/btn hover:bg-accent/90 transition-colors"
