@@ -12,7 +12,7 @@ const datos = Object.fromEntries(
 );
 ---
 
-<script type="application/json" id="gallery-data" set:html={JSON.stringify(datos)}></script>
+<script type="application/json" id="gallery-data" set:html={JSON.stringify(datos).replace(/</g, '\\u003c')}></script>
 
 <div
   id="project-gallery"
@@ -134,11 +134,16 @@ const datos = Object.fromEntries(
       pintar();
     };
 
-    // Abrir: botón "Ver Detalles" y click en la tarjeta
+    // Abrir: botón "Ver Detalles" y click en la tarjeta (el click en el botón
+    // burbujea a la tarjeta, así que un único listener cubre ambos casos).
+    // El foco al cerrar se devuelve siempre al botón "Ver Detalles": es el
+    // único elemento realmente focusable de la tarjeta (el <div> no tiene
+    // tabindex), así que enfocar el <div> sería un no-op.
     document.querySelectorAll<HTMLElement>('.project-item[data-slug]').forEach((tarjeta) => {
       const slug = tarjeta.dataset.slug;
       if (!slug) return;
-      tarjeta.addEventListener('click', () => abrir(slug, tarjeta));
+      const boton = tarjeta.querySelector<HTMLElement>('.abrir-galeria');
+      tarjeta.addEventListener('click', () => abrir(slug, boton ?? tarjeta));
     });
 
     btnCerrar.addEventListener('click', cerrar);
