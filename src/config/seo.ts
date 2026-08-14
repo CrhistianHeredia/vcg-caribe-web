@@ -102,8 +102,7 @@ export const keywords = {
   // Palabras clave de servicios
   services: [
     'instalación de ventanas',
-    'reparación de cancelería',
-    'mantenimiento de aluminio',
+    'cancelería hotelera',
     'proyectos hoteleros',
     'proyectos residenciales',
     'proyectos comerciales',
@@ -120,7 +119,6 @@ export const keywords = {
     'ventanas corredizas de aluminio precio',
     'empresa de cancelería en Quintana Roo',
     'proveedor de vidrio y aluminio Yucatán',
-    'mantenimiento de ventanas para hoteles',
   ],
 };
 
@@ -128,13 +126,13 @@ export const keywords = {
 export const pageMeta = {
   home: {
     title: 'VCG Caribe | Cancelería de Vidrio y Aluminio en Cancún y Riviera Maya',
-    description: 'Expertos en cancelería de vidrio y aluminio para hoteles, residencias y comercios. +15 años de experiencia en Cancún, Riviera Maya y Yucatán. Cotiza ahora.',
+    description: 'Expertos en cancelería de vidrio y aluminio para hoteles, residencias y comercios. +10 años de experiencia en Cancún, Riviera Maya y Yucatán. Cotiza ahora.',
     keywords: [...keywords.primary, ...keywords.geographic.slice(0, 4)].join(', '),
   },
 
   servicios: {
     title: 'Servicios de Cancelería | Ventanas, Barandales y Muros Cortina - VCG Caribe',
-    description: 'Servicios completos de cancelería: ventanas, puertas, barandales, muros cortina y mantenimiento. Soluciones en vidrio y aluminio para todo tipo de proyectos.',
+    description: 'Servicios completos de cancelería: ventanas, puertas, barandales, muros cortina y proyectos hoteleros. Soluciones en vidrio y aluminio para todo tipo de proyectos.',
     keywords: [...keywords.services, ...keywords.secondary.slice(0, 4)].join(', '),
   },
 
@@ -145,8 +143,8 @@ export const pageMeta = {
   },
 
   nosotros: {
-    title: 'Sobre Nosotros | +15 Años de Experiencia en Cancelería - VCG Caribe',
-    description: 'Conoce a VCG Caribe: más de 15 años transformando espacios con cancelería de alta calidad. Valor, Confianza y Garantía en cada proyecto.',
+    title: 'Sobre Nosotros | +10 Años de Experiencia en Cancelería - VCG Caribe',
+    description: 'Conoce a VCG Caribe: más de 10 años transformando espacios con cancelería de alta calidad. Valor, Confianza y Garantía en cada proyecto.',
     keywords: ['empresa de cancelería', 'VCG Caribe', 'cancelería de calidad', 'experiencia en aluminio'].join(', '),
   },
 

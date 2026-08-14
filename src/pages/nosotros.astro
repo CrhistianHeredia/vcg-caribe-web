@@ -24,18 +24,21 @@ const values = [
 ];
 
 const stats = [
-  { number: '15', suffix: '+', label: 'Años de experiencia', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
+  { number: '10', suffix: '+', label: 'Años de experiencia', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
   { number: '500', suffix: '+', label: 'Proyectos completados', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>` },
   { number: '42', suffix: '+', label: 'Clientes satisfechos', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
   { number: '50', suffix: '+', label: 'Profesionales', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>` },
 ];
 
+// Sin años: el "10+ Años de experiencia" (línea 27) es el único dato de
+// antigüedad respaldado por el cliente. Los hitos de esta línea de tiempo no
+// tienen fecha confirmada — se repondrán cuando el cliente las confirme.
 const timeline = [
-  { year: '2009', title: 'Fundación', description: 'Iniciamos operaciones en Cancún con el sueño de transformar la industria de la cancelería en el sureste mexicano.' },
-  { year: '2013', title: 'Primer Gran Proyecto', description: 'Completamos nuestro primer proyecto hotelero de gran escala, marcando el inicio de nuestra especialización en el sector turístico.' },
-  { year: '2018', title: 'Expansión Regional', description: 'Ampliamos nuestra cobertura a toda la Riviera Maya, consolidándonos como referente en cancelería de alta gama.' },
-  { year: '2022', title: 'Apertura Mérida', description: 'Inauguramos nuestra oficina en Mérida, hoy matriz de la empresa, extendiendo nuestros servicios a toda la Península de Yucatán.' },
-  { year: '2024', title: 'Innovación Continua', description: 'Incorporamos tecnología de punta y sistemas sustentables, reforzando nuestro compromiso con la excelencia.' },
+  { title: 'Fundación', description: 'Iniciamos operaciones en Cancún con el sueño de transformar la industria de la cancelería en el sureste mexicano.' },
+  { title: 'Primer Gran Proyecto', description: 'Completamos nuestro primer proyecto hotelero de gran escala, marcando el inicio de nuestra especialización en el sector turístico.' },
+  { title: 'Expansión Regional', description: 'Ampliamos nuestra cobertura a toda la Riviera Maya, consolidándonos como referente en cancelería de alta gama.' },
+  { title: 'Apertura Mérida', description: 'Inauguramos nuestra oficina en Mérida, hoy matriz de la empresa, extendiendo nuestros servicios a toda la Península de Yucatán.' },
+  { title: 'Innovación Continua', description: 'Incorporamos tecnología de punta y sistemas sustentables, reforzando nuestro compromiso con la excelencia.' },
 ];
 
 const services = [
@@ -52,7 +55,7 @@ const services = [
     <!-- Background Image -->
     <div class="absolute inset-0">
       <img
-        src="/images/projects/paravian-interior.jpg"
+        src="/images/projects/paravian/04.jpg"
         alt="VCG Caribe Proyectos"
         class="w-full h-full object-cover"
         loading="eager"
@@ -75,7 +78,7 @@ const services = [
           <span class="gradient-text">Garantía</span>
         </h1>
         <p class="text-white/80 text-lg md:text-xl mb-8 leading-relaxed">
-          Más de 15 años transformando espacios con soluciones de cancelería
+          Más de 10 años transformando espacios con soluciones de cancelería
           de la más alta calidad en el sureste de México. Somos líderes en
           vidrio y aluminio arquitectónico.
         </p>
@@ -144,7 +147,7 @@ const services = [
       <SectionHeader
         kicker="Nuestra Historia"
         title="Una trayectoria de excelencia"
-        subtitle="Desde 2009, hemos crecido junto con la región, participando en los proyectos más emblemáticos del sureste mexicano."
+        subtitle="Hemos crecido junto con la región, participando en los proyectos más emblemáticos del sureste mexicano."
         dark={true}
       />
 
@@ -158,8 +161,7 @@ const services = [
             <!-- Content -->
             <div class={`flex-1 ${index % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'} pl-20 md:pl-0`}>
               <div class="glass-card-dark p-6 rounded-2xl inline-block">
-                <span class="text-accent font-bold text-lg">{item.year}</span>
-                <h3 class="text-xl font-bold text-white mt-1 mb-2">{item.title}</h3>
+                <h3 class="text-xl font-bold text-white mb-2">{item.title}</h3>
                 <p class="text-white/70 text-sm leading-relaxed">{item.description}</p>
               </div>
             </div>
@@ -185,7 +187,7 @@ const services = [
         <div class="relative group order-2 lg:order-1">
           <div class="p-[3px] rounded-[2rem_0.5rem_2rem_0.5rem] bg-gradient-to-br from-accent via-navy to-accent shadow-2xl">
             <img
-              src="/images/projects/cielo-maya-arquitectura.jpg"
+              src="/images/projects/cielo-maya/01.jpg"
               alt="VCG Caribe - Excelencia en Cancelería"
               class="w-full h-[500px] object-cover rounded-[calc(2rem-3px)_calc(0.5rem-3px)_calc(2rem-3px)_calc(0.5rem-3px)]"
               loading="lazy"

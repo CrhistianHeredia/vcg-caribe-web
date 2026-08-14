@@ -1,0 +1,225 @@
+---
+import type { Proyecto } from '../data/proyectos';
+
+interface Props {
+  proyectos: Proyecto[];
+}
+
+const { proyectos } = Astro.props;
+
+const datos = Object.fromEntries(
+  proyectos.map((p) => [p.slug, { title: p.title, images: p.images }])
+);
+---
+
+<script type="application/json" id="gallery-data" set:html={JSON.stringify(datos).replace(/</g, '\\u003c')}></script>
+
+<div
+  id="project-gallery"
+  class="fixed inset-0 z-[100] hidden items-center justify-center bg-deep/95 backdrop-blur-sm p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="gallery-title"
+>
+  <!-- Cerrar -->
+  <button
+    type="button"
+    id="gallery-close"
+    class="absolute top-4 right-4 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-deep/80 text-white hover:bg-accent hover:text-deep transition-colors"
+    aria-label="Cerrar galería"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+
+  <div id="gallery-inner" class="relative w-full max-w-5xl">
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between gap-4 mb-3 pr-16">
+      <h3 id="gallery-title" class="text-white text-lg md:text-2xl font-bold"></h3>
+      <span id="gallery-counter" class="shrink-0 px-3 py-1 bg-accent text-deep text-sm font-bold rounded-full"></span>
+    </div>
+
+    <!-- Imagen -->
+    <div class="relative rounded-2xl overflow-hidden bg-deep aspect-[4/3] md:aspect-[16/10]">
+      <img id="gallery-image" src="" alt="" class="w-full h-full object-contain" loading="lazy" />
+
+      <button
+        type="button"
+        id="gallery-prev"
+        class="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-deep/80 text-white hover:bg-accent hover:text-deep transition-colors"
+        aria-label="Foto anterior"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        id="gallery-next"
+        class="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-deep/80 text-white hover:bg-accent hover:text-deep transition-colors"
+        aria-label="Foto siguiente"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface DatosProyecto {
+    title: string;
+    images: string[];
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('project-gallery');
+    const datosEl = document.getElementById('gallery-data');
+    if (!modal || !datosEl) return;
+
+    const datos: Record<string, DatosProyecto> = JSON.parse(datosEl.textContent || '{}');
+
+    const imagen = document.getElementById('gallery-image') as HTMLImageElement | null;
+    const titulo = document.getElementById('gallery-title');
+    const contador = document.getElementById('gallery-counter');
+    const btnCerrar = document.getElementById('gallery-close') as HTMLButtonElement | null;
+    const btnPrev = document.getElementById('gallery-prev') as HTMLButtonElement | null;
+    const btnNext = document.getElementById('gallery-next') as HTMLButtonElement | null;
+    const inner = document.getElementById('gallery-inner');
+    if (!imagen || !titulo || !contador || !btnCerrar || !btnPrev || !btnNext || !inner) return;
+
+    let fotos: string[] = [];
+    let actual = 0;
+    let disparador: HTMLElement | null = null;
+
+    const pintar = () => {
+      imagen.src = fotos[actual] ?? '';
+      imagen.alt = `${titulo.textContent} — foto ${actual + 1}`;
+      contador.textContent = `${actual + 1} / ${fotos.length}`;
+      const varias = fotos.length > 1;
+      btnPrev.classList.toggle('hidden', !varias);
+      btnNext.classList.toggle('hidden', !varias);
+    };
+
+    const abrir = (slug: string, origen: HTMLElement) => {
+      const proyecto = datos[slug];
+      if (!proyecto || proyecto.images.length === 0) return;
+
+      disparador = origen;
+      fotos = proyecto.images;
+      actual = 0;
+      titulo.textContent = proyecto.title;
+      pintar();
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      btnCerrar.focus();
+    };
+
+    const cerrar = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+      disparador?.focus();
+      disparador = null;
+    };
+
+    const mover = (delta: number) => {
+      if (fotos.length === 0) return;
+      actual = (actual + delta + fotos.length) % fotos.length;
+      pintar();
+    };
+
+    // El botón "Ver Detalles" solo existe visualmente de md (tablet) hacia
+    // arriba (ver portafolio.astro: "hidden md:block"). En móvil está oculto
+    // con display:none — no es focusable y devolverle el foco con .focus()
+    // sería un no-op — así que ahí la tarjeta misma actúa como disparador:
+    // se le da role="button" + tabindex="0" para que sea alcanzable por
+    // teclado y sea un destino válido de foco al cerrar el modal.
+    // mqBoton usa el mismo punto de corte (768px = md de Tailwind) que la
+    // clase "hidden md:block" del botón, así ambos coinciden siempre.
+    const mqBoton = window.matchMedia('(min-width: 768px)');
+
+    const obtenerDisparador = (tarjeta: HTMLElement, boton: HTMLElement | null): HTMLElement =>
+      boton && mqBoton.matches ? boton : tarjeta;
+
+    const actualizarAccesibilidadTarjeta = (tarjeta: HTMLElement) => {
+      if (mqBoton.matches) {
+        // El botón real ya es el control accesible; evita anidar dos
+        // elementos interactivos (tarjeta + botón) en el orden de tabulación.
+        tarjeta.removeAttribute('role');
+        tarjeta.removeAttribute('tabindex');
+      } else {
+        tarjeta.setAttribute('role', 'button');
+        tarjeta.setAttribute('tabindex', '0');
+      }
+    };
+
+    // Abrir: tap/click en la tarjeta (el click en el botón, cuando existe,
+    // burbujea a la tarjeta, así que un único listener cubre ambos casos sin
+    // abrir el modal dos veces) y Enter/Espacio cuando la tarjeta misma es el
+    // control accesible (móvil).
+    document.querySelectorAll<HTMLElement>('.project-item[data-slug]').forEach((tarjeta) => {
+      const slug = tarjeta.dataset.slug;
+      if (!slug) return;
+      const boton = tarjeta.querySelector<HTMLElement>('.abrir-galeria');
+
+      actualizarAccesibilidadTarjeta(tarjeta);
+      mqBoton.addEventListener('change', () => actualizarAccesibilidadTarjeta(tarjeta));
+
+      tarjeta.addEventListener('click', () => abrir(slug, obtenerDisparador(tarjeta, boton)));
+      tarjeta.addEventListener('keydown', (e: KeyboardEvent) => {
+        // Solo cuando la propia tarjeta es el control (role="button"): un
+        // <button> real ya maneja Enter/Espacio de forma nativa.
+        if (e.target !== tarjeta) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          abrir(slug, obtenerDisparador(tarjeta, boton));
+        }
+      });
+    });
+
+    btnCerrar.addEventListener('click', cerrar);
+    btnPrev.addEventListener('click', () => mover(-1));
+    btnNext.addEventListener('click', () => mover(1));
+
+    // Click en el fondo cierra; click dentro del contenido no
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) cerrar();
+    });
+
+    // Teclado: Esc cierra, flechas navegan, Tab queda atrapado en el modal
+    document.addEventListener('keydown', (e) => {
+      if (modal.classList.contains('hidden')) return;
+
+      if (e.key === 'Escape') { cerrar(); return; }
+      if (e.key === 'ArrowLeft') { mover(-1); return; }
+      if (e.key === 'ArrowRight') { mover(1); return; }
+
+      if (e.key === 'Tab') {
+        const focusables = [btnCerrar, btnPrev, btnNext].filter(
+          (b) => !b.classList.contains('hidden')
+        );
+        const i = focusables.findIndex((b) => b === document.activeElement);
+        e.preventDefault();
+        const siguiente = e.shiftKey
+          ? focusables[(i - 1 + focusables.length) % focusables.length]
+          : focusables[(i + 1) % focusables.length];
+        siguiente?.focus();
+      }
+    });
+
+    // Móvil: swipe horizontal
+    let inicioX = 0;
+    inner.addEventListener('touchstart', (e) => { inicioX = e.changedTouches[0].screenX; }, { passive: true });
+    inner.addEventListener('touchend', (e) => {
+      const delta = e.changedTouches[0].screenX - inicioX;
+      if (Math.abs(delta) < 50) return;
+      mover(delta < 0 ? 1 : -1);
+    }, { passive: true });
+  });
+</script>
