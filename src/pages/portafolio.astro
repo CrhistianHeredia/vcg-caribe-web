@@ -133,50 +133,67 @@ const stats = [
                   )}
                 </div>
 
-              <!-- Content Overlay -->
-              <div class={`absolute inset-x-0 bottom-0 p-4 md:p-6 transform transition-transform duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0'}`}>
-                <!-- Location -->
-                <div class={`flex items-center gap-2 text-accent-light text-sm font-medium mb-2 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-100'}`}>
-                  <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  </svg>
-                  {proyecto.location}
+              <!-- Content Overlay.
+                   flex-col + justify-end mantiene el contenido pegado abajo, como antes.
+                   La diferencia es que ahora hay dos bloques: uno "expandible" (specs +
+                   descripción + botón, min-h-0 + overflow-hidden) que puede comprimirse y
+                   recortar SU PROPIO contenido cuando no cabe, y uno "protegido"
+                   (ubicación + título, flex-shrink-0) que nunca cede espacio. Así, aunque
+                   el bloque expandible mida más que el alto disponible de la tarjeta, el
+                   título nunca queda empujado fuera del área visible. -->
+              <div class={`absolute inset-0 z-10 flex flex-col justify-end p-4 md:p-6 transform transition-transform duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0'}`}>
+                <!-- Bloque expandible: specs, descripción y botón -->
+                <div class="min-h-0 overflow-hidden flex flex-col">
+                  <!-- Specs Badges (máx. 3: en tarjetas de una fila no cabían las 4) -->
+                  {proyecto.specs && (
+                    <div class={`flex flex-wrap gap-1.5 mb-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-100'}`}>
+                      {proyecto.specs.slice(0, 3).map((spec: string) => (
+                        <span class="px-2 py-0.5 bg-deep/70 text-accent-light text-xs font-semibold rounded-md border border-accent/40 backdrop-blur-sm shadow-md">
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <!-- Description -->
+                  <p class={`text-white/90 text-sm leading-relaxed transition-opacity duration-500 ${proyecto.size === 'featured' ? 'line-clamp-4' : proyecto.size === 'tall' ? 'line-clamp-3' : 'line-clamp-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-150'}`}>
+                    {proyecto.description}
+                  </p>
+
+                  <!-- View Button. group-focus-within revela este bloque cuando el botón
+                       recibe foco por teclado: antes quedaba invisible pero focusable
+                       (12 paradas de tabulación "fantasma" en las tarjetas normal/wide). -->
+                  <div class={`mt-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-200'}`}>
+                    <button
+                      type="button"
+                      class="abrir-galeria inline-flex items-center gap-2 px-4 py-2 bg-accent text-deep font-semibold text-sm rounded-lg group/btn hover:bg-accent/90 transition-colors"
+                      data-slug={proyecto.slug}
+                    >
+                      Ver Detalles
+                      <svg class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
-                <!-- Title -->
-                <h3 class={`font-bold text-white mb-2 leading-tight ${proyecto.size === 'featured' ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'}`}>
-                  {proyecto.title}
-                </h3>
-
-                <!-- Specs Badges -->
-                {proyecto.specs && (
-                  <div class={`flex flex-wrap gap-1.5 mb-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-100'}`}>
-                    {proyecto.specs.map((spec: string) => (
-                      <span class="px-2 py-0.5 bg-deep/70 text-accent-light text-xs font-semibold rounded-md border border-accent/40 backdrop-blur-sm shadow-md">
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <!-- Description -->
-                <p class={`text-white/90 text-sm leading-relaxed transition-opacity duration-500 ${proyecto.size === 'featured' ? 'line-clamp-4' : proyecto.size === 'tall' ? 'line-clamp-3' : 'line-clamp-2 opacity-0 group-hover:opacity-100 delay-150'}`}>
-                  {proyecto.description}
-                </p>
-
-                <!-- View Button -->
-                <div class={`mt-3 transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 delay-200'}`}>
-                  <button
-                    type="button"
-                    class="abrir-galeria inline-flex items-center gap-2 px-4 py-2 bg-accent text-deep font-semibold text-sm rounded-lg group/btn hover:bg-accent/90 transition-colors"
-                    data-slug={proyecto.slug}
-                  >
-                    Ver Detalles
-                    <svg class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                <!-- Bloque protegido: ubicación + título. flex-shrink-0 evita que el
+                     bloque expandible lo comprima; es lo mínimo que debe verse siempre,
+                     en cualquier tamaño de tarjeta y en cualquier viewport. -->
+                <div class="flex-shrink-0">
+                  <!-- Location -->
+                  <div class={`flex items-center gap-2 text-accent-light text-sm font-medium mb-2 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-opacity duration-500 ${proyecto.size === 'featured' || proyecto.size === 'tall' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 delay-100'}`}>
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                  </button>
+                    {proyecto.location}
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class={`font-bold text-white leading-tight ${proyecto.size === 'featured' ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'}`}>
+                    {proyecto.title}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -336,8 +353,9 @@ const stats = [
      tarjeta que nunca entrara en el viewport (sin scroll, JS lento/roto, o un
      filtro que la muestra de golpe) se quedaría en opacity:0 para siempre. El
      estado oculto solo se activa cuando el propio script confirma que va a
-     animar (clase .js-reveal-ready en <html>), y ese script respeta
-     prefers-reduced-motion. */
+     animar (clase .js-reveal-ready en #projects-grid, no en <html>: los
+     estilos de Astro son "scoped" y el selector no matchearía fuera de este
+     archivo), y ese script respeta prefers-reduced-motion. */
   .reveal {
     opacity: 1;
     transform: none;
