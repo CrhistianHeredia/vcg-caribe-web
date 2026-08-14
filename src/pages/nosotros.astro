@@ -30,12 +30,15 @@ const stats = [
   { number: '50', suffix: '+', label: 'Profesionales', icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>` },
 ];
 
+// Sin años: el "10+ Años de experiencia" (línea 27) es el único dato de
+// antigüedad respaldado por el cliente. Los hitos de esta línea de tiempo no
+// tienen fecha confirmada — se repondrán cuando el cliente las confirme.
 const timeline = [
-  { year: '2009', title: 'Fundación', description: 'Iniciamos operaciones en Cancún con el sueño de transformar la industria de la cancelería en el sureste mexicano.' },
-  { year: '2013', title: 'Primer Gran Proyecto', description: 'Completamos nuestro primer proyecto hotelero de gran escala, marcando el inicio de nuestra especialización en el sector turístico.' },
-  { year: '2018', title: 'Expansión Regional', description: 'Ampliamos nuestra cobertura a toda la Riviera Maya, consolidándonos como referente en cancelería de alta gama.' },
-  { year: '2022', title: 'Apertura Mérida', description: 'Inauguramos nuestra oficina en Mérida, hoy matriz de la empresa, extendiendo nuestros servicios a toda la Península de Yucatán.' },
-  { year: '2024', title: 'Innovación Continua', description: 'Incorporamos tecnología de punta y sistemas sustentables, reforzando nuestro compromiso con la excelencia.' },
+  { title: 'Fundación', description: 'Iniciamos operaciones en Cancún con el sueño de transformar la industria de la cancelería en el sureste mexicano.' },
+  { title: 'Primer Gran Proyecto', description: 'Completamos nuestro primer proyecto hotelero de gran escala, marcando el inicio de nuestra especialización en el sector turístico.' },
+  { title: 'Expansión Regional', description: 'Ampliamos nuestra cobertura a toda la Riviera Maya, consolidándonos como referente en cancelería de alta gama.' },
+  { title: 'Apertura Mérida', description: 'Inauguramos nuestra oficina en Mérida, hoy matriz de la empresa, extendiendo nuestros servicios a toda la Península de Yucatán.' },
+  { title: 'Innovación Continua', description: 'Incorporamos tecnología de punta y sistemas sustentables, reforzando nuestro compromiso con la excelencia.' },
 ];
 
 const services = [
@@ -144,7 +147,7 @@ const services = [
       <SectionHeader
         kicker="Nuestra Historia"
         title="Una trayectoria de excelencia"
-        subtitle="Desde 2009, hemos crecido junto con la región, participando en los proyectos más emblemáticos del sureste mexicano."
+        subtitle="Hemos crecido junto con la región, participando en los proyectos más emblemáticos del sureste mexicano."
         dark={true}
       />
 
@@ -158,8 +161,7 @@ const services = [
             <!-- Content -->
             <div class={`flex-1 ${index % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'} pl-20 md:pl-0`}>
               <div class="glass-card-dark p-6 rounded-2xl inline-block">
-                <span class="text-accent font-bold text-lg">{item.year}</span>
-                <h3 class="text-xl font-bold text-white mt-1 mb-2">{item.title}</h3>
+                <h3 class="text-xl font-bold text-white mb-2">{item.title}</h3>
                 <p class="text-white/70 text-sm leading-relaxed">{item.description}</p>
               </div>
             </div>
