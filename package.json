@@ -10,7 +10,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "pnpm build && wrangler pages deploy dist --project-name=vcg-caribe"
+    "deploy": "pnpm build && wrangler pages deploy dist --project-name=vcg-caribe",
+    "imagenes": "node scripts/optimizar-imagenes.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
