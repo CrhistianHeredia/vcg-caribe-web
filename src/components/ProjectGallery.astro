@@ -42,7 +42,26 @@ const datos = Object.fromEntries(
 
     <!-- Imagen -->
     <div class="relative rounded-2xl overflow-hidden bg-deep aspect-[4/3] md:aspect-[16/10]">
-      <img id="gallery-image" src="" alt="" class="w-full h-full object-contain" loading="lazy" />
+      <img id="gallery-image" src="" alt="" class="w-full h-full object-contain" decoding="async" />
+
+      <!--
+        Overlay de carga: cubre el hueco mientras se descarga la foto (la
+        actual permanece debajo hasta que la nueva esté lista). Empieza
+        invisible (opacity-0) y solo se hace visible desde el script, con un
+        pequeño retraso salvo en la primera apertura del visor (ver
+        mostrarCargando). pointer-events-none para no bloquear los botones
+        de navegación, que están por encima en el orden del DOM.
+      -->
+      <div
+        id="gallery-loading"
+        class="absolute inset-0 flex items-center justify-center bg-deep/60 opacity-0 transition-opacity duration-150 pointer-events-none"
+        aria-hidden="true"
+      >
+        <svg class="w-10 h-10 animate-spin text-accent" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+      </div>
 
       <button
         type="button"
@@ -89,19 +108,110 @@ const datos = Object.fromEntries(
     const btnPrev = document.getElementById('gallery-prev') as HTMLButtonElement | null;
     const btnNext = document.getElementById('gallery-next') as HTMLButtonElement | null;
     const inner = document.getElementById('gallery-inner');
-    if (!imagen || !titulo || !contador || !btnCerrar || !btnPrev || !btnNext || !inner) return;
+    const cargandoOverlay = document.getElementById('gallery-loading');
+    if (!imagen || !titulo || !contador || !btnCerrar || !btnPrev || !btnNext || !inner || !cargandoOverlay) return;
 
     let fotos: string[] = [];
     let actual = 0;
     let disparador: HTMLElement | null = null;
 
-    const pintar = () => {
-      imagen.src = fotos[actual] ?? '';
-      imagen.alt = `${titulo.textContent} — foto ${actual + 1}`;
-      contador.textContent = `${actual + 1} / ${fotos.length}`;
+    // Token de navegación: cada llamada a mostrar() incrementa este contador
+    // y guarda su propio valor local (miToken). Si el usuario navega varias
+    // veces antes de que termine una descarga anterior, al resolver esa
+    // descarga el token global ya no coincide con miToken y se descarta sin
+    // tocar la imagen visible — así nunca se pinta una foto "vieja" que
+    // llegó tarde (condición de carrera pedida en el encargo).
+    let token = 0;
+
+    // Cache de descargas en curso/terminadas por URL, compartida entre
+    // proyectos. Cada Image() se crea fuera del DOM (no hereda loading=lazy,
+    // siempre es "eager") y se resuelve por onload/onerror; una vez resuelta,
+    // asignar esa misma URL al <img> visible la sirve desde la caché HTTP del
+    // navegador, sin una segunda descarga real.
+    const cargas = new Map<string, Promise<void>>();
+
+    const precargar = (src: string): Promise<void> => {
+      let promesa = cargas.get(src);
+      if (!promesa) {
+        promesa = new Promise((resolve) => {
+          const img = new Image();
+          img.decoding = 'async';
+          img.onload = () => resolve();
+          img.onerror = () => resolve(); // no bloquear la navegación por un error de red
+          img.src = src;
+        });
+        cargas.set(src, promesa);
+      }
+      return promesa;
+    };
+
+    let cargandoTimeoutId: number | undefined;
+
+    // Muestra/oculta el overlay de "cargando". Con inmediato=false espera
+    // 120ms antes de mostrarlo: si la foto ya estaba precargada (vecina) o
+    // llega de la caché HTTP, la transición es instantánea y el spinner ni
+    // se ve. inmediato=true se usa solo en la primera apertura del visor,
+    // donde no hay foto anterior que mostrar mientras carga.
+    const mostrarCargando = (activo: boolean, inmediato = false) => {
+      window.clearTimeout(cargandoTimeoutId);
+      if (activo) {
+        if (inmediato) {
+          // Sin esperar el siguiente frame de la transición CSS: se anula
+          // la duración de la transición, se aplica el cambio y se fuerza
+          // un reflow (offsetWidth) antes de restaurarla, así el overlay
+          // queda opaco ya en el mismo tick síncrono del click que abre el
+          // modal — ni un solo frame sin cobertura.
+          cargandoOverlay.style.transitionDuration = '0ms';
+          cargandoOverlay.classList.remove('opacity-0');
+          void cargandoOverlay.offsetWidth;
+          cargandoOverlay.style.transitionDuration = '';
+        } else {
+          cargandoTimeoutId = window.setTimeout(() => {
+            cargandoOverlay.classList.remove('opacity-0');
+          }, 120);
+        }
+      } else {
+        cargandoOverlay.classList.add('opacity-0');
+      }
+    };
+
+    const actualizarBotones = () => {
       const varias = fotos.length > 1;
       btnPrev.classList.toggle('hidden', !varias);
       btnNext.classList.toggle('hidden', !varias);
+    };
+
+    // Precarga en segundo plano la foto siguiente y la anterior a la actual,
+    // para que avanzar con flechas/swipe sea instantáneo la mayoría de las
+    // veces (ya viene de la caché HTTP cuando el usuario pulsa la flecha).
+    const precargarVecinas = () => {
+      if (fotos.length <= 1) return;
+      precargar(fotos[(actual + 1) % fotos.length]);
+      precargar(fotos[(actual - 1 + fotos.length) % fotos.length]);
+    };
+
+    const mostrar = async (indice: number, inmediato = false) => {
+      actual = indice;
+      const miToken = ++token;
+      const src = fotos[actual];
+
+      // Contador, alt y botones se actualizan ya mismo: reflejan la
+      // posición "real" del usuario aunque la foto tarde en llegar.
+      contador.textContent = `${actual + 1} / ${fotos.length}`;
+      imagen.alt = `${titulo.textContent} — foto ${actual + 1}`;
+      actualizarBotones();
+      mostrarCargando(true, inmediato);
+
+      const cargaActual = precargar(src);
+      precargarVecinas(); // en paralelo, no bloquea la foto que se está mostrando
+      await cargaActual;
+
+      if (miToken !== token) return; // navegación más reciente en curso: descartar
+
+      // La foto anterior sigue visible en <img> hasta este punto — nunca
+      // hay un hueco vacío entre una foto y la siguiente.
+      imagen.src = src;
+      mostrarCargando(false);
     };
 
     const abrir = (slug: string, origen: HTMLElement) => {
@@ -110,14 +220,22 @@ const datos = Object.fromEntries(
 
       disparador = origen;
       fotos = proyecto.images;
-      actual = 0;
       titulo.textContent = proyecto.title;
-      pintar();
+
+      // Limpiar la foto del proyecto anterior: sin esto, al abrir otro
+      // proyecto se vería un instante la última foto del proyecto que se
+      // había visto antes.
+      imagen.removeAttribute('src');
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       document.body.style.overflow = 'hidden';
       btnCerrar.focus();
+
+      // inmediato=true: es la apertura del visor, no hay foto previa que
+      // mantener en pantalla mientras se descarga la primera — el overlay
+      // de carga debe verse desde ya, sin esperar los 120ms.
+      void mostrar(0, true);
     };
 
     const cerrar = () => {
@@ -130,8 +248,7 @@ const datos = Object.fromEntries(
 
     const mover = (delta: number) => {
       if (fotos.length === 0) return;
-      actual = (actual + delta + fotos.length) % fotos.length;
-      pintar();
+      void mostrar((actual + delta + fotos.length) % fotos.length);
     };
 
     // El botón "Ver Detalles" solo existe visualmente de md (tablet) hacia
