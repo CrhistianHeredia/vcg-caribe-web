@@ -83,7 +83,7 @@ export const proyectos: Proyecto[] = [
     location: 'Riviera Maya, Q. Roo',
     year: '2025',
     description:
-      'Casa residencial de arquitectura angular con extensa cancelería de aluminio en perfil negro: ventanales fijos de piso a techo -incluidas piezas de geometría trapezoidal que siguen los muros inclinados de la fachada- y puertas corredizas multipanel que conectan el interior con la alberca y el jardín. Se complementa con un barandal de escalera en vidrio templado sin marco con herrajes tipo araña, y vidrio esmerilado en el cancel de baño.',
+      'Casa residencial de arquitectura angular con extensa cancelería de aluminio en perfil negro: ventanales fijos de piso a techo —incluidas piezas de geometría trapezoidal que siguen los muros inclinados de la fachada— y puertas corredizas multipanel que conectan el interior con la alberca y el jardín. Se complementa con un barandal de escalera en vidrio templado sin marco con herrajes tipo araña, y vidrio esmerilado en el cancel de baño.',
     specs: ['Perfil aluminio negro', 'Ventanas geometría angular', 'Puerta corrediza multipanel', 'Barandal vidrio frameless'],
     size: 'tall',
     images: [
@@ -103,7 +103,7 @@ export const proyectos: Proyecto[] = [
     year: '2026',
     description:
       'Torre residencial en etapa de obra donde ya se aprecia instalado el sistema de barandales de vidrio templado con tinte azul en el borde de cada balcón, a lo largo de toda la fachada. En planta baja ya están colocados los ventanales de aluminio de gran formato; los paneles de fachada superiores aún conservan película de protección plástica propia de la etapa de instalación.',
-    specs: ['Vidrio templado', 'Tinte azul', 'Torre residencial', 'Gran altura'],
+    specs: ['Vidrio templado', 'Tinte azul', 'Ventanal gran formato', 'Balcón perimetral'],
     size: 'normal',
     status: 'En ejecución',
     images: [
@@ -179,7 +179,7 @@ export const proyectos: Proyecto[] = [
     location: 'Sureste de México',
     year: '2022',
     description:
-      'Residencia que combina un muro corredizo panorámico de vidrio templado con marco de aluminio en tono bronce, que abre la sala hacia una terraza cubierta, con una escalera interior resuelta con barandal de vidrio templado sin remate superior (frameless) anclado al canto de los escalones. Se aprecian también rieles empotrados en piso de piedra para las puertas correderas y un muro cortina interior con marco oscuro que separa un salón de juegos de la caja de escalera.',
+      'Residencia que combina un muro corredizo panorámico de vidrio templado con marco de aluminio en tono bronce, que abre la sala hacia una terraza cubierta, con una escalera interior resuelta con barandal de vidrio templado sin remate superior (frameless) anclado al canto de los escalones. Se aprecian también rieles empotrados en piso de piedra para las puertas corredizas y un muro cortina interior con marco oscuro que separa un salón de juegos de la caja de escalera.',
     specs: ['Corrediza panorámica', 'Barandal frameless', 'Aluminio tono bronce', 'Riel empotrado'],
     size: 'normal',
     images: [
@@ -199,7 +199,7 @@ export const proyectos: Proyecto[] = [
     year: '2020',
     description:
       'Residencia de dos niveles con alberca donde predomina el vidrio templado en paños fijos y corredizos con marco de aluminio en tono negro, que conectan el interior con el jardín y la alberca. Los balcones usan barandales de vidrio templado sin remate superior sobre postes de acero inoxidable, y destaca una ventana estructural de vidrio en un muro interior que deja ver el agua de la alberca desde dentro de la casa. En baños se combinan puertas de ducha de vidrio templado con acabados en mármol y madera.',
-    specs: ['Vidrio templado', 'Spigot inoxidable', 'Aluminio negro', 'Corrediza panorámica'],
+    specs: ['Vidrio templado', 'Poste inoxidable', 'Aluminio negro', 'Corrediza panorámica'],
     size: 'wide',
     images: [
       '/images/projects/villa-magna/01.jpg',
@@ -217,7 +217,7 @@ export const proyectos: Proyecto[] = [
     location: 'Playa del Carmen, Q. Roo',
     year: '2019',
     description:
-      'Hotel boutique de cuatro niveles con fachada dominada por ventanería fija de aluminio en perfil negro y barandales de vidrio templado en cada balcón. En la azotea se combina un muro de vidrio estructural con herrajes tipo araña en el acceso con un sistema de puertas correderas de aluminio de gran formato que abre el lounge hacia la alberca, además de barandal de vidrio sin marco en la terraza con vista al mar.',
+      'Hotel boutique de cuatro niveles con fachada dominada por ventanería fija de aluminio en perfil negro y barandales de vidrio templado en cada balcón. En la azotea se combina un muro de vidrio estructural con herrajes tipo araña en el acceso con un sistema de puertas corredizas de aluminio de gran formato que abre el lounge hacia la alberca, además de barandal de vidrio sin marco en la terraza con vista al mar.',
     specs: ['Aluminio negro', 'Vidrio estructural', 'Barandal sin marco', 'Corrediza gran formato'],
     size: 'tall',
     images: [
@@ -236,7 +236,7 @@ export const proyectos: Proyecto[] = [
     location: 'Puerto Morelos, Q. Roo',
     year: '2020',
     description:
-      'Complejo hotelero con dos sistemas de cancelería distintos: barandales horizontales de aluminio con acabado madera oscura y diseño de listones estilo asiático en puentes y pasillos sobre espejos de agua, y pérgolas de aluminio con vigas en acabado vino que cubren las terrazas de los restaurantes, combinadas con muros de lamas horizontales y mamparas correderas de vidrio y aluminio gris.',
+      'Complejo hotelero con dos sistemas de cancelería distintos: barandales horizontales de aluminio con acabado madera oscura y diseño de listones estilo asiático en puentes y pasillos sobre espejos de agua, y pérgolas de aluminio con vigas en acabado vino que cubren las terrazas de los restaurantes, combinadas con muros de lamas horizontales y mamparas corredizas de vidrio y aluminio gris.',
     specs: ['Estilo asiático', 'Acabado madera', 'Pérgola de aluminio', 'Mampara corrediza'],
     size: 'normal',
     images: [
