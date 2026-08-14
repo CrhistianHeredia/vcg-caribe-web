@@ -23,6 +23,8 @@
     "@astrojs/check": "^0.9.9",
     "pdf-lib": "^1.17.1",
     "playwright": "^1.60.0",
+    "sharp": "^0.35.3",
+    "typescript": "^5.9.3",
     "wrangler": "^4.94.0"
   },
   "pnpm": {
