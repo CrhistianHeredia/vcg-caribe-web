@@ -42,15 +42,29 @@ const datos = Object.fromEntries(
 
     <!-- Imagen -->
     <div class="relative rounded-2xl overflow-hidden bg-deep aspect-[4/3] md:aspect-[16/10]">
-      <img id="gallery-image" src="" alt="" class="w-full h-full object-contain" decoding="async" />
+      <!--
+        Doble buffer: dos <img> apilados en el mismo sitio. En todo momento
+        uno está visible (opacity-100) y el otro oculto (opacity-0). Para
+        cambiar de foto se carga y decodifica en el <img> OCULTO y solo se
+        intercambia la visibilidad cuando ya está listo (ver mostrar() en
+        el script) — así el <img> VISIBLE nunca cambia de src antes de
+        tiempo. Reasignar el src de un único <img> lo vacía al instante
+        (naturalWidth vuelve a 0) aunque el navegador ya tenga la foto en
+        caché: decodificarla de nuevo en ESE elemento sigue costando un
+        tiempo real, medido con Playwright, suficiente para dejar un hueco
+        en blanco perceptible. Con dos elementos ese hueco no puede
+        ocurrir: el visible no se toca hasta que el reemplazo está listo.
+      -->
+      <img id="gallery-image-a" src="" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-150" decoding="async" />
+      <img id="gallery-image-b" src="" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-150" decoding="async" />
 
       <!--
-        Overlay de carga: cubre el hueco mientras se descarga la foto (la
-        actual permanece debajo hasta que la nueva esté lista). Empieza
-        invisible (opacity-0) y solo se hace visible desde el script, con un
-        pequeño retraso salvo en la primera apertura del visor (ver
-        mostrarCargando). pointer-events-none para no bloquear los botones
-        de navegación, que están por encima en el orden del DOM.
+        Overlay de carga: indicador adicional de "esto está tardando",
+        superpuesto sobre la foto visible (que no desaparece mientras
+        tanto). Empieza invisible (opacity-0) y solo se hace visible desde
+        el script, con un pequeño retraso salvo en la primera apertura del
+        visor (ver mostrarCargando). pointer-events-none para no bloquear
+        los botones de navegación, que están por encima en el orden del DOM.
       -->
       <div
         id="gallery-loading"
@@ -101,7 +115,8 @@ const datos = Object.fromEntries(
 
     const datos: Record<string, DatosProyecto> = JSON.parse(datosEl.textContent || '{}');
 
-    const imagen = document.getElementById('gallery-image') as HTMLImageElement | null;
+    const imagenA = document.getElementById('gallery-image-a') as HTMLImageElement | null;
+    const imagenB = document.getElementById('gallery-image-b') as HTMLImageElement | null;
     const titulo = document.getElementById('gallery-title');
     const contador = document.getElementById('gallery-counter');
     const btnCerrar = document.getElementById('gallery-close') as HTMLButtonElement | null;
@@ -109,7 +124,12 @@ const datos = Object.fromEntries(
     const btnNext = document.getElementById('gallery-next') as HTMLButtonElement | null;
     const inner = document.getElementById('gallery-inner');
     const cargandoOverlay = document.getElementById('gallery-loading');
-    if (!imagen || !titulo || !contador || !btnCerrar || !btnPrev || !btnNext || !inner || !cargandoOverlay) return;
+    if (!imagenA || !imagenB || !titulo || !contador || !btnCerrar || !btnPrev || !btnNext || !inner || !cargandoOverlay) return;
+
+    // Los dos <img> del doble buffer. `visible` indica cuál de los dos
+    // (índice 0 o 1) es el que está mostrándose ahora mismo.
+    const imagenes: [HTMLImageElement, HTMLImageElement] = [imagenA, imagenB];
+    let visible = 0;
 
     let fotos: string[] = [];
     let actual = 0;
@@ -125,9 +145,13 @@ const datos = Object.fromEntries(
 
     // Cache de descargas en curso/terminadas por URL, compartida entre
     // proyectos. Cada Image() se crea fuera del DOM (no hereda loading=lazy,
-    // siempre es "eager") y se resuelve por onload/onerror; una vez resuelta,
-    // asignar esa misma URL al <img> visible la sirve desde la caché HTTP del
-    // navegador, sin una segunda descarga real.
+    // siempre es "eager"); se resuelve solo tras onload Y decode() (no solo
+    // onload). Decodificar acá es una optimización, no la garantía de fondo
+    // (esa la da el doble buffer de arriba): "calienta" la caché de bitmaps
+    // decodificados de Chromium, así que cuando después se asigna esa misma
+    // URL al <img> oculto que la va a mostrar, SU decode() (ver
+    // esperarPintable) suele resolver casi al instante en vez de tardar el
+    // tiempo real de decodificar el JPEG de nuevo.
     const cargas = new Map<string, Promise<void>>();
 
     const precargar = (src: string): Promise<void> => {
@@ -136,7 +160,13 @@ const datos = Object.fromEntries(
         promesa = new Promise((resolve) => {
           const img = new Image();
           img.decoding = 'async';
-          img.onload = () => resolve();
+          img.onload = () => {
+            if (typeof img.decode === 'function') {
+              img.decode().then(resolve).catch(resolve);
+            } else {
+              resolve();
+            }
+          };
           img.onerror = () => resolve(); // no bloquear la navegación por un error de red
           img.src = src;
         });
@@ -181,6 +211,37 @@ const datos = Object.fromEntries(
       btnNext.classList.toggle('hidden', !varias);
     };
 
+    // Espera a que un <img> del DOM tenga realmente el frame listo para
+    // pintarse. Se usa sobre el <img> OCULTO del doble buffer, antes de
+    // intercambiarlo con el visible. Ojo: terminar la descarga en el
+    // precargador (new Image()) NO es lo mismo — asignar el src a ESTE
+    // elemento dispara su propia petición/decode, que puede tardar aunque
+    // el precargador ya haya resuelto. decode() es la señal correcta:
+    // resuelve solo cuando el bitmap está decodificado y listo para el
+    // siguiente paint, y si el navegador la soporta evita además la jank de
+    // decodificar en el hilo principal durante el pintado. Si el src cambia
+    // antes de que termine (navegación más reciente), decode() rechaza — se
+    // atrapa y el chequeo de token en mostrar() descarta el resultado igual
+    // que con el precargador.
+    const esperarPintable = async (el: HTMLImageElement): Promise<void> => {
+      if (typeof el.decode === 'function') {
+        await el.decode().catch(() => {});
+        return;
+      }
+      // Fallback para navegadores sin decode(): la señal es el propio
+      // evento load/error del <img>.
+      await new Promise<void>((resolve) => {
+        const limpiar = () => {
+          el.removeEventListener('load', onLoad);
+          el.removeEventListener('error', onError);
+        };
+        const onLoad = () => { limpiar(); resolve(); };
+        const onError = () => { limpiar(); resolve(); };
+        el.addEventListener('load', onLoad);
+        el.addEventListener('error', onError);
+      });
+    };
+
     // Precarga en segundo plano la foto siguiente y la anterior a la actual,
     // para que avanzar con flechas/swipe sea instantáneo la mayoría de las
     // veces (ya viene de la caché HTTP cuando el usuario pulsa la flecha).
@@ -195,10 +256,9 @@ const datos = Object.fromEntries(
       const miToken = ++token;
       const src = fotos[actual];
 
-      // Contador, alt y botones se actualizan ya mismo: reflejan la
-      // posición "real" del usuario aunque la foto tarde en llegar.
+      // Contador y botones se actualizan ya mismo: reflejan la posición
+      // "real" del usuario aunque la foto tarde en llegar.
       contador.textContent = `${actual + 1} / ${fotos.length}`;
-      imagen.alt = `${titulo.textContent} — foto ${actual + 1}`;
       actualizarBotones();
       mostrarCargando(true, inmediato);
 
@@ -208,9 +268,29 @@ const datos = Object.fromEntries(
 
       if (miToken !== token) return; // navegación más reciente en curso: descartar
 
-      // La foto anterior sigue visible en <img> hasta este punto — nunca
-      // hay un hueco vacío entre una foto y la siguiente.
-      imagen.src = src;
+      // Se carga y decodifica en el <img> OCULTO (el que no se ve ahora
+      // mismo). El <img> VISIBLE no se toca en ningún momento de este
+      // proceso — sigue mostrando la foto anterior pase lo que pase con la
+      // red, sin importar cuánto tarde esta descarga.
+      const oculto = imagenes[1 - visible];
+      oculto.src = src;
+      oculto.alt = `${titulo.textContent} — foto ${actual + 1}`;
+      await esperarPintable(oculto);
+
+      if (miToken !== token) return; // navegación más reciente en curso: descartar
+
+      // Intercambio de visibilidad: instantáneo y no depende de ningún
+      // timer para ser correcto (a diferencia de reasignar src en un único
+      // <img>). El que hasta ahora era visible pasa a ser el "oculto"
+      // disponible para la próxima carga.
+      imagenes[visible].classList.remove('opacity-100');
+      imagenes[visible].classList.add('opacity-0');
+      imagenes[visible].setAttribute('aria-hidden', 'true');
+      oculto.classList.remove('opacity-0');
+      oculto.classList.add('opacity-100');
+      oculto.removeAttribute('aria-hidden');
+      visible = 1 - visible;
+
       mostrarCargando(false);
     };
 
@@ -222,10 +302,17 @@ const datos = Object.fromEntries(
       fotos = proyecto.images;
       titulo.textContent = proyecto.title;
 
-      // Limpiar la foto del proyecto anterior: sin esto, al abrir otro
-      // proyecto se vería un instante la última foto del proyecto que se
-      // había visto antes.
-      imagen.removeAttribute('src');
+      // Limpiar los dos buffers del proyecto anterior: el overlay de carga
+      // es semitransparente (bg-deep/60), así que si quedara una foto
+      // vieja en el buffer visible se entrevería debajo mientras carga la
+      // primera del proyecto nuevo.
+      for (const el of imagenes) {
+        el.removeAttribute('src');
+        el.classList.remove('opacity-100');
+        el.classList.add('opacity-0');
+        el.setAttribute('aria-hidden', 'true');
+      }
+      visible = 0;
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
